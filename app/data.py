@@ -234,6 +234,75 @@ def register_user(username, password):
 
 #----------TASKS-ACCESSORS----------#
 
+
+def all_tasks():
+    
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    data = c.execute('SELECT id FROM tasks').fetchall()
+
+    db.commit()
+    db.close()
+
+    return clean_list(data)
+
+
+def get_all_tasks(username):
+    
+    all_tasks = all_tasks()
+    user_tasks = []
+    for task in all_tasks:
+        users = get_task_users(task)
+        if username in users:
+            user_tasks += [task]
+    return user_tasks
+
+
+def get_all_tasks_owned(username):
+    
+    all_tasks = all_tasks()
+    return [task for task in all_tasks if get_field("tasks", "id", id, "owner") == username]
+
+
+def get_task_name(id):
+    return get_field("tasks", "id", id, "name")
+    
+
+def get_task_desc(id):
+    return get_field("tasks", "id", id, "description")
+
+
+def get_task_deadline(id):
+    return get_field("tasks", "id", id, "deadline")
+
+
+def get_task_status(id):
+    return get_field("tasks", "id", id, "status")
+
+
+def get_task_category(id):
+    return get_field("tasks", "id", id, "category")
+
+
+def get_task_users(id):
+    users = get_field("tasks", "id", id, "users"
+    return users.split(" ").clear("")
+
+
+def get_task_visibility(id):
+    return get_field("tasks", "id", id, "visibility")
+
+
+def get_task_join_perms(id):
+    return get_field("tasks", "id", id, "join_perms")
+
+
+def get_task_owner(id):
+    return get_field("tasks", "id", id, "owner")
+    
+
+
 #----------TASKS-MUTATORS----------#
 
 
