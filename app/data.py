@@ -26,7 +26,8 @@ def create_users_table():
                     friends         TEXT,
                     friend_reqs     TEXT,
                     pfp             TEXT,
-                    invite_perms    TEXT
+                    invite_perms    TEXT,
+                    pending_invites TEXT
                 )"""
     create_table(contents)
 
@@ -100,6 +101,11 @@ def get_invite_perms(username):
     return get_field("users", "username", username, "invite_perms")
 
 
+def get_pending_task_invites(username):
+    invites = get_field("users", "username", username, "pending_invites")
+    return invites.split(" ").clear("")
+
+
 #----------USERS-MUTATORS----------#
 
 
@@ -159,6 +165,23 @@ def set_invite_perms(username, newval):
     
     modify_field("users", "username", username, "invite_perms", newval)
     return "success"
+
+
+def invite_user(username, task):
+    p_task_invs = get_pending_task_invites(username)
+    p_task_invs += " " + task
+    modify_field("users", "username", username, "pending_invites", p_task_invs)
+
+
+def accept_task_invite(username, task_id):
+    rm_task_invite(username, task_id)
+    add_user(task_id, username)
+
+
+def rm_task_invite(username, task_id):
+    p_task_invs = get_pending_task_invites(username)
+    p_task_invs.replace(" " + task_id, "")
+    modify_field("users", "username", username, "pending_invites", p_task_invs)
 
 
 #----------LOGIN-REGISTER-AUTH----------#
@@ -222,7 +245,7 @@ def register_user(username, password):
     password = str(hashlib.sha256(password).hexdigest())
     
     # use ? for unsafe/user provided variables
-    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","")', (username, password,))
+    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","", "")', (username, password,))
 
     db.commit()
     db.close()
@@ -306,6 +329,74 @@ def get_task_owner(id):
 #----------TASKS-MUTATORS----------#
 
 
+def create_task(name, description, deadline, category, users_to_inv, visibility, join_perms, owner):
+    
+    id = gen_id()
+    status = "Not started"
+    
+    # add to db
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute('INSERT INTO tasks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                                        (name, id, description, deadline, status, category, " " + owner, visibility, join_perms, owner,))
+    db.commit()
+    db.close()
+    
+    # invite other users
+    for user in users_to_inv:
+        invite_user(user, id)
+    
+    return id
+        
+
+# only show this option for users who own the task
+def delete_task(id):
+    delete_row("tasks", "id", id)
+
+
+# only show this option for user who don't own the task
+def leave_task(task_id, username):
+    users = get_task_users(id)
+    users.remove(username)
+    task_users = " " + users.join(" ")
+    modify_field("tasks", "id", id, "users", task_users)
+
+
+def add_user(task_id, username):
+    users = get_task_users(id)
+    users += [username]
+    task_users = " " + users.join(" ")
+    modify_field("tasks", "id", id, "users", task_users)
+
+
+def set_task_description(task_id, desc):
+    modify_field("tasks", "id", id, "description", desc)
+
+
+def set_task_deadline(task_id, deadline):
+    modify_field("tasks", "id", id, "deadline", deadline)
+
+
+def set_task_status(task_id, status):
+    modify_field("tasks", "id", id, "status", status)
+
+
+def set_task_category(task_id, category):
+    modify_field("tasks", "id", id, "category", category)
+
+
+def set_task_visibility(task_id, vis):
+    modify_field("tasks", "id", id, "visibility", vis)
+
+
+def set_task_join_perms(task_id, perms):
+    modify_field("tasks", "id", id, "join_perms", perms)
+
+
+def set_task_owner(task_id, username):
+    modify_field("tasks", "id", id, "owner", username)
+
+
 #=============================GENERAL=HELPERS=============================#
 
 
@@ -360,6 +451,17 @@ def modify_field(table, ID_fieldname, ID, field, new_val):
 
     # use ? for unsafe/user provided variables
     c.execute(f'UPDATE {table} SET {field} = ? WHERE {ID_fieldname} = ?', (new_val, ID,))
+
+    db.commit()
+    db.close()
+
+
+def delete_row(table, ID_fieldname, id):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    # use ? for unsafe/user provided variables
+    c.execute(f'DELETE FROM {table} WHERE {ID_fieldname} = ?', (ID,))
 
     db.commit()
     db.close()
