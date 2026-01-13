@@ -1,0 +1,3 @@
+DEVLOG!!
+
+01-12-2026 Natalie K. -- Updated README.md to match requirements and fixed page setup. Also put navbar into home.html
