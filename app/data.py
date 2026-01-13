@@ -1,0 +1,213 @@
+# cerulean (Natalie Kieger, Michelle Chen, Maya Berchin)
+# SoftDev pd 5
+# P02: Makers Makin' It, Act I
+# 2025-01-11
+# Time spent: not that much on this file tbh, mostly recycling. ~40 mins?
+
+import sqlite3                      # enable control of an sqlite database
+import hashlib                      # for consistent hashes
+
+DB_FILE="data.db"
+
+
+#=============================MAKE=TABLES=============================#
+
+
+# make the database tables we need if they don't already exist
+
+# users
+def create_users_table():
+
+    contents =  """
+                CREATE TABLE IF NOT EXISTS users (
+                    username        TEXT    NOT NULL    PRIMARY KEY,
+                    password        TEXT    NOT NULL,
+                    friends         TEXT,
+                    friend_reqs     TEXT,
+                    pfp             TEXT,
+                    invite_perms    TEXT
+                )"""
+    create_table(contents)
+
+# tasks
+def create_tasks_table():
+    contents =  """
+                CREATE TABLE IF NOT EXISTS users (
+                    name            TEXT    NOT NULL,
+                    id              TEXT    NOT NULL    PRIMARY KEY,
+                    description     TEXT,
+                    deadline        TEXT,
+                    status          TEXT    NOT NULL,
+                    category        TEXT    NOT NULL,
+                    users           TEXT    NOT NULL,
+                    visibility      TEXT,
+                    join_perms      TEXT,
+                    owner           TEXT    NOT NULL
+                )"""
+    create_table(contents)
+
+
+#=============================USERS=============================#
+
+
+#----------USERS-ACCESSORS----------#
+
+
+# returns a list of usernames
+def get_all_users():
+    
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    data = c.execute('SELECT username FROM userdata').fetchall()
+
+    db.commit()
+    db.close()
+
+    return clean_list(data)
+
+#----------USERS-MUTATORS----------#
+
+
+#----------LOGIN-REGISTER-AUTH----------#
+
+
+# returns whether or not a user exists
+def user_exists(username):
+    all_users = get_all_users()
+    for user in all_users:
+        if (user == username):
+            return True
+    return False
+
+
+# checks if provided password in login attempt matches user password
+def auth(username, password):
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    if not user_exists(username):
+        db.commit()
+        db.close()
+
+        #raise ValueError("Username does not exist")
+        return False
+
+    # use ? for unsafe/user provided variables
+    passpointer = c.execute('SELECT password FROM userdata WHERE username = ?', (username,))
+    real_pass = passpointer.fetchone()[0]
+
+    db.commit()
+    db.close()
+
+    password = password.encode('utf-8')
+
+    # hash password here
+    if real_pass != str(hashlib.sha256(password).hexdigest()):
+        #raise ValueError("Incorrect password")
+        return False
+
+    return True
+
+
+# adds a new user's data to user table
+def register_user(username, password):
+
+    if user_exists(username):
+        #raise ValueError("Username already exists")
+        return "Username already exists"
+
+    #if password == "":
+        #raise ValueError("You must enter a non-empty password")
+        #return "You must enter a non-empty password"
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    # hash password here
+    password = password.encode('utf-8')
+    password = str(hashlib.sha256(password).hexdigest())
+
+    # use ? for unsafe/user provided variables
+    c.execute('INSERT INTO userdata VALUES (?, ?, "","","")', (username, password,))
+
+    db.commit()
+    db.close()
+
+    return "success"
+
+
+#=============================TASKS=============================#
+
+#----------TASKS-ACCESSORS----------#
+
+#----------TASKS-MUTATORS----------#
+
+
+#=============================GENERAL=HELPERS=============================#
+
+
+def create_table(contents):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute(contents)
+    db.commit()
+    db.close()
+
+# wrapper method
+# used for a bunch of accessor methods; used when only 1 item should be returned
+def get_field(table, ID_fieldname, ID, field):
+    lst = get_field_list(table, ID_fieldname, ID, field)
+    if (len(lst) == 0):
+        return 'None'
+    return lst[0]
+
+
+# used for a bunch of accessor methods; used when a list of items in a certain field should be returned
+def get_field_list(table, ID_fieldname, ID, field):
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    # use ? for unsafe/user provided variables
+    data = c.execute(f'SELECT {field} FROM {table} WHERE {ID_fieldname} = ?', (ID,)).fetchall()
+
+    db.commit()
+    db.close()
+
+    return clean_list(data)
+
+
+# turn a list of tuples (returned by .fetchall()) into a 1d list
+def clean_list(raw_output):
+
+    clean_output = []
+
+    for lst in raw_output:
+        for item in lst:
+            if str(item) != 'None':
+                clean_output += [item]
+
+    return clean_output
+
+
+def modify_field(table, ID_fieldname, ID, field, new_val):
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    # use ? for unsafe/user provided variables
+    c.execute(f'UPDATE {table} SET {field} = ? WHERE {ID_fieldname} = ?', (new_val, ID,))
+
+    db.commit()
+    db.close()
+
+
+#=============================MAIN=============================#
+
+# run this if this program was called directly, not as a dependency for another thing
+if __name__ == '__main__':
+    create_users_table()
+    create_tasks_table()
+    # other tests
