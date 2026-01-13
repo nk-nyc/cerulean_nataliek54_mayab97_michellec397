@@ -282,6 +282,26 @@ def get_all_tasks(username):
     return user_tasks
 
 
+def get_friend_tasks(username):
+    
+    tasks = all_tasks()
+    friends = get_friends(username)
+    friend_tasks = []
+    for task in tasks:
+        users = get_task_users(task)
+        for friend in friends:
+            if friend in users:
+                friend_tasks += [task]
+    return friend_tasks
+
+
+def get_public_tasks():
+    
+    tasks = all_tasks()
+    return [task for task in tasks if get_field("tasks", "id", task, "visibility") == "public"]
+
+
+
 def get_all_tasks_owned(username):
     
     tasks = all_tasks()
