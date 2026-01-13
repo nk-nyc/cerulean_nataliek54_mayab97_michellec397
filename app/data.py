@@ -60,7 +60,7 @@ def get_all_users():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
 
-    data = c.execute('SELECT username FROM userdata').fetchall()
+    data = c.execute('SELECT username FROM users').fetchall()
 
     db.commit()
     db.close()
@@ -91,7 +91,9 @@ def count_fr_reqs(username):
     
 
 def get_pfp(username):
-    return get_field("users", "username", username, "pfp")
+    link = get_field("users", "username", username, "pfp")
+    # handle none/redirect to default
+    return link
 
 
 def get_invite_perms(username):
@@ -306,4 +308,8 @@ def gen_id():
 if __name__ == '__main__':
     create_users_table()
     create_tasks_table()
-    # other tests
+    register_user("Maya", "hi")
+    print(auth("Maya", "hi"))
+    print(user_exists("Maya"))
+    print(user_exists("J"))
+    print(auth("Maya", "a"))
