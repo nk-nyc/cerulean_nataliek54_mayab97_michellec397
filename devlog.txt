@@ -1,3 +1,9 @@
 DEVLOG!!
 
 01-12-2026 Natalie K. -- Updated README.md to match requirements and fixed page setup. Also put navbar into home.html
+
+mayaB -- 2026-01-13 01:04
+- Have copied over a lot of code into data.py from previous projects
+- Added as many accessors and mutators as I could think of
+- Got login and register to work
+- No compile errors from data yet but not merging current state with main bc ik some functions don't work as intended yet
