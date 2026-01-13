@@ -65,6 +65,31 @@ def get_all_users():
     db.close()
 
     return clean_list(data)
+    
+
+# returns a list of the user's friends
+def get_friends(username):
+    # friends stored by their usernames space separated
+    friends = get_field("users", "username", username, "friends")
+    friend_list = friends.split(' ')
+    return friend_list
+
+
+# returns a list of the friend requests a user may accept or reject
+def get_friend_reqs(username):
+    # friend reqa stored by usernames space separated
+    friend_reqs = get_field("users", "username", username, "friend_reqs")
+    friend_req_list = friend_reqs.split(' ')
+    return friend_req_list
+
+
+def get_pfp(username):
+    return get_field("users", "username", username, "pfp")
+
+
+def get_invite_perms(username):
+    return get_field("users", "username", username, "invite_perms")
+
 
 #----------USERS-MUTATORS----------#
 
