@@ -34,7 +34,7 @@ def create_users_table():
 # tasks
 def create_tasks_table():
     contents =  """
-                CREATE TABLE IF NOT EXISTS users (
+                CREATE TABLE IF NOT EXISTS tasks (
                     name            TEXT    NOT NULL,
                     id              TEXT    NOT NULL    PRIMARY KEY,
                     description     TEXT,
@@ -73,7 +73,7 @@ def get_all_users():
 def get_friends(username):
     # friends stored by their usernames space separated
     friends = get_field("users", "username", username, "friends")
-    friend_list = friends.split(" ").clear("")
+    friend_list = clean_list(friends.split(" "))
     return friend_list
 
 
@@ -81,13 +81,13 @@ def get_friends(username):
 def get_friend_reqs(username):
     # friend reqa stored by usernames space separated
     friend_reqs = get_field("users", "username", username, "friend_reqs")
-    friend_req_list = friend_reqs.split(" ").clear("")
+    friend_req_list = clean_list(friend_reqs.split(" "))
     return friend_req_list
 
 
 def count_fr_reqs(username):
     fr_reqs = get_friend_reqs(username)
-    fr_list = fr_reqs.split(" ").clear("")
+    fr_list = clean_list(fr_reqs.split(" "))
     return len(fr_list)
     
 
@@ -103,7 +103,7 @@ def get_invite_perms(username):
 
 def get_pending_task_invites(username):
     invites = get_field("users", "username", username, "pending_invites")
-    return invites.split(" ").clear("")
+    return clean_list(invites.split(" "))
 
 
 #----------USERS-MUTATORS----------#
@@ -273,9 +273,9 @@ def all_tasks():
 
 def get_all_tasks(username):
     
-    all_tasks = all_tasks()
+    tasks = all_tasks()
     user_tasks = []
-    for task in all_tasks:
+    for task in tasks:
         users = get_task_users(task)
         if username in users:
             user_tasks += [task]
@@ -284,8 +284,8 @@ def get_all_tasks(username):
 
 def get_all_tasks_owned(username):
     
-    all_tasks = all_tasks()
-    return [task for task in all_tasks if get_field("tasks", "id", id, "owner") == username]
+    tasks = all_tasks()
+    return [task for task in tasks if get_field("tasks", "id", task, "owner") == username]
 
 
 def get_task_name(id):
@@ -309,8 +309,8 @@ def get_task_category(id):
 
 
 def get_task_users(id):
-    users = get_field("tasks", "id", id, "users"
-    return users.split(" ").clear("")
+    users = get_field("tasks", "id", id, "users")
+    return clean_list(users.split(" "))
 
 
 def get_task_visibility(id):
@@ -438,7 +438,7 @@ def clean_list(raw_output):
 
     for lst in raw_output:
         for item in lst:
-            if str(item) != 'None':
+            if str(item) != 'None' and item != "":
                 clean_output += [item]
 
     return clean_output
@@ -480,7 +480,6 @@ if __name__ == '__main__':
     create_users_table()
     create_tasks_table()
     register_user("Maya", "hi")
-    print(auth("Maya", "hi"))
-    print(user_exists("Maya"))
-    print(user_exists("J"))
-    print(auth("Maya", "a"))
+    create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
+    print(all_tasks())
+    print(get_all_tasks("Maya"))
