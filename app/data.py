@@ -25,7 +25,8 @@ def create_users_table():
                     friends         TEXT,
                     friend_reqs     TEXT,
                     pfp             TEXT,
-                    invite_perms    TEXT
+                    invite_perms    TEXT,
+                    id              TEXT    NOT NULL    PRIMARY KEY
                 )"""
     create_table(contents)
 
@@ -67,31 +68,45 @@ def get_all_users():
     return clean_list(data)
     
 
+def get_username(id):
+    return get_field("users", "id", id, "username")
+
+
 # returns a list of the user's friends
-def get_friends(username):
-    # friends stored by their usernames space separated
-    friends = get_field("users", "username", username, "friends")
-    friend_list = friends.split(' ')
+def get_friends(id):
+    # friends stored by their ids space separated
+    friends = get_field("users", "id", id, "friends")
+    friend_list = friends.split(" ")
     return friend_list
 
 
 # returns a list of the friend requests a user may accept or reject
-def get_friend_reqs(username):
-    # friend reqa stored by usernames space separated
-    friend_reqs = get_field("users", "username", username, "friend_reqs")
+def get_friend_reqs(id):
+    # friend reqa stored by ids space separated
+    friend_reqs = get_field("users", "id", id, "friend_reqs")
     friend_req_list = friend_reqs.split(' ')
     return friend_req_list
 
 
-def get_pfp(username):
-    return get_field("users", "username", username, "pfp")
+def get_pfp(id):
+    return get_field("users", "id", id, "pfp")
 
 
-def get_invite_perms(username):
-    return get_field("users", "username", username, "invite_perms")
+def get_invite_perms(id):
+    return get_field("users", "id", id, "invite_perms")
 
 
 #----------USERS-MUTATORS----------#
+
+def change_username(id, new_username):
+
+    if user_exists(new_username):
+        return "Username already exists"
+    
+    #table, ID_fieldname, ID, field, new_val
+    modify_field("users", "id", id, "username", new_username)
+    
+    return "success"
 
 
 #----------LOGIN-REGISTER-AUTH----------#
