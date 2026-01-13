@@ -73,22 +73,22 @@ def get_all_users():
 def get_friends(username):
     # friends stored by their usernames space separated
     friends = get_field("users", "username", username, "friends")
-    friend_list = clean_list(friends.split(" "))
-    return friend_list
+    friend_list = friends.split()
+    return rm_empty(friend_list)
 
 
 # returns a list of the friend requests a user may accept or reject
 def get_friend_reqs(username):
     # friend reqa stored by usernames space separated
     friend_reqs = get_field("users", "username", username, "friend_reqs")
-    friend_req_list = clean_list(friend_reqs.split(" "))
-    return friend_req_list
+    friend_req_list = friend_reqs.split()
+    return rm_empty(friend_req_list)
 
 
 def count_fr_reqs(username):
     fr_reqs = get_friend_reqs(username)
-    fr_list = clean_list(fr_reqs.split(" "))
-    return len(fr_list)
+    fr_list =fr_reqs.split()
+    return len(rm_empty(fr_list))
     
 
 def get_pfp(username):
@@ -103,7 +103,7 @@ def get_invite_perms(username):
 
 def get_pending_task_invites(username):
     invites = get_field("users", "username", username, "pending_invites")
-    return clean_list(invites.split(" "))
+    return rm_empty(invites.split())
 
 
 #----------USERS-MUTATORS----------#
@@ -245,7 +245,7 @@ def register_user(username, password):
     password = str(hashlib.sha256(password).hexdigest())
     
     # use ? for unsafe/user provided variables
-    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","", "")', (username, password,))
+    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","","")', (username, password,))
 
     db.commit()
     db.close()
@@ -310,7 +310,7 @@ def get_task_category(id):
 
 def get_task_users(id):
     users = get_field("tasks", "id", id, "users")
-    return clean_list(users.split(" "))
+    return rm_empty(users.split())
 
 
 def get_task_visibility(id):
@@ -444,6 +444,10 @@ def clean_list(raw_output):
     return clean_output
 
 
+def rm_empty(lst):
+    return [item for item in lst if item]
+
+
 def modify_field(table, ID_fieldname, ID, field, new_val):
 
     db = sqlite3.connect(DB_FILE)
@@ -461,7 +465,7 @@ def delete_row(table, ID_fieldname, id):
     c = db.cursor()
 
     # use ? for unsafe/user provided variables
-    c.execute(f'DELETE FROM {table} WHERE {ID_fieldname} = ?', (ID,))
+    c.execute(f'DELETE FROM {table} WHERE {ID_fieldname} = ?', (id,))
 
     db.commit()
     db.close()
@@ -480,6 +484,10 @@ if __name__ == '__main__':
     create_users_table()
     create_tasks_table()
     register_user("Maya", "hi")
+    register_user("Ethan", "test")
+    print(get_all_users())
     create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
+    create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
     print(all_tasks())
     print(get_all_tasks("Maya"))
+    print(get_all_tasks("Ethan"))
