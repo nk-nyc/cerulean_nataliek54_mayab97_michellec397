@@ -2,7 +2,7 @@
 # SoftDev pd 5
 # P02: Makers Makin' It, Act I
 # 2025-01-11
-# Time spent: 
+# Time spent:
 
 from flask import Flask, render_template, send_file
 from flask import session, request, redirect, url_for
@@ -21,11 +21,11 @@ app.secret_key = 'supersecre'
 
 @app.route('/', methods=["GET", "POST"])
 def login():
-    
+
     # stored active session, take user to response page
     if 'username' in session:
         return redirect(url_for("home"))
-    
+
     if 'username' in request.form:
         username = request.form.get('username').strip().lower()
         password = request.form.get('password').strip()
@@ -37,14 +37,14 @@ def login():
         # if password is correct redirect home
         session["username"] = username
         return redirect(url_for("home"))
-        
+
     else:
         return render_template("login.html")
 
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    
+
     if request.method == 'POST':
         username = request.form.get('username').strip().lower()
         password = request.form.get('password').strip()
@@ -72,8 +72,14 @@ def home():
 
 @app.route("/logout")
 def logout():
-    session.clear() 
+    session.clear()
     return redirect(url_for('login'))
+
+@app.route('/calendar')
+def calendar():
+    if not 'username' in session:
+        return redirect(url_for('login'))
+    return render_template('calendar.html')
 
 
 if __name__=='__main__':
