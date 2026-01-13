@@ -106,6 +106,11 @@ def get_pending_task_invites(username):
     return rm_empty(invites.split())
 
 
+def get_public_users():
+    users = get_all_users()
+    return [user for user in users if get_field("users", "username", user, "invite_perms" == "everyone")]
+
+
 #----------USERS-MUTATORS----------#
 
 
