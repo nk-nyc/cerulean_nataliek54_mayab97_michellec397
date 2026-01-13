@@ -2,6 +2,11 @@ DEVLOG!!
 
 01-12-2026 Natalie K. -- Updated README.md to match requirements and fixed page setup. Also put navbar into home.html
 
+INITIAL DD REVIEW
+- clarified on category, visibility, join_perms and invite_perms in devlog
+- added missing fields to tables
+- added labeling to front end diagram for logging out
+
 mayaB -- 2026-01-13 01:04
 - Have copied over a lot of code into data.py from previous projects
 - Added as many accessors and mutators as I could think of
