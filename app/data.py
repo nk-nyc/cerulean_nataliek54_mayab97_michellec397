@@ -72,7 +72,7 @@ def get_all_users():
 def get_friends(username):
     # friends stored by their usernames space separated
     friends = get_field("users", "username", username, "friends")
-    friend_list = friends.split(" ")
+    friend_list = friends.split(" ").clear("")
     return friend_list
 
 
@@ -80,9 +80,15 @@ def get_friends(username):
 def get_friend_reqs(username):
     # friend reqa stored by usernames space separated
     friend_reqs = get_field("users", "username", username, "friend_reqs")
-    friend_req_list = friend_reqs.split(' ')
+    friend_req_list = friend_reqs.split(" ").clear("")
     return friend_req_list
 
+
+def count_fr_reqs(username):
+    fr_reqs = get_friend_reqs(username)
+    fr_list = fr_reqs.split(" ").clear("")
+    return len(fr_list)
+    
 
 def get_pfp(username):
     return get_field("users", "username", username, "pfp")
@@ -99,6 +105,58 @@ def change_password(username, old_passwd, new_passwd):
     
     if not auth(username, old_passwd):
         return "Incorrect old password"
+    
+    if new_passwd == "":
+        return "Password cannot be empty"
+    
+    new_passwd = new_passwd.encode('utf-8')
+    new_passwd = str(hashlib.sha256(new_passwd).hexdigest())
+    
+    modify_field("users", "username", username, "password", new_passwd)
+    return "success"
+
+
+# only call this function if the receiver does not currently have a pending req from the sender
+def send_friend_req(sender, receiver):
+    fr_reqs = get_friend_reqs(receiver)
+    fr_reqs += " " + sender
+    modify_field("users", "username", receiver, "friend_reqs", fr_reqs)
+
+
+def accept_fr(sender, receiver):
+    
+    # remove sender from fr_reqs
+    remove_fr(sender, receiver)
+    
+    # add to friends
+    r_friends = get_friends(receiver)
+    r_friends += " " + sender
+    modify_field("users", "username", receiver, "friends", r_friends)
+    s_friends = get_friends(sender)
+    s_friends += " " + receiver
+    modify_field("users", "username", sender, "friends", s_friends)
+    
+
+def remove_fr(sender, receiver):
+    
+    # remove sender from fr_reqs
+    fr_reqs = get_friend_reqs(receiver)
+    fr_reqs.replace(" " + sender, "")
+    modify_field("users", "username", receiver, "friend_reqs", fr_reqs)
+
+
+def edit_pfp(username):
+    return "tba"
+
+
+def set_invite_perms(username, newval):
+    
+    valid_options = ["", "friends", "anyone"]
+    if not newval in valid_options:
+        return "invalid option for invite_perms"
+    
+    modify_field("users", "username", username, "invite_perms", newval)
+    return "success"
 
 
 #----------LOGIN-REGISTER-AUTH----------#
@@ -149,10 +207,10 @@ def register_user(username, password):
     if user_exists(username):
         #raise ValueError("Username already exists")
         return "Username already exists"
-
-    #if password == "":
+    
+    if password == "":
         #raise ValueError("You must enter a non-empty password")
-        #return "You must enter a non-empty password"
+        return "Password cannot be empty"
 
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
