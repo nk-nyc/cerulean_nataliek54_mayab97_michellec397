@@ -1,28 +1,80 @@
-import sqlite3
+# cerulean (Natalie Kieger, Michelle Chen, Maya Berchin)
+# SoftDev pd 5
+# P02: Makers Makin' It, Act I
+# 2025-01-11
+# Time spent: 
+
+from flask import Flask, render_template, send_file
+from flask import session, request, redirect, url_for
 import random
 import urllib.request
 import json
-from flask import Flask, render_template, send_file
-from flask import session, request, redirect
+import data
+
+# initialize tables
+data.create_users_table()
+data.create_tasks_table()
 
 app = Flask(__name__)
 app.secret_key = 'supersecre'
 
-DB_FILE = "data.db"
 
-db = sqlite3.connect(DB_FILE) #open if file exists, otherwise create
-c = db.cursor()
+@app.route('/', methods=["GET", "POST"])
+def login():
+    
+    # stored active session, take user to response page
+    if 'username' in session:
+        return redirect(url_for("home"))
+    
+    if 'username' in request.form:
+        username = request.form.get('username').strip().lower()
+        password = request.form.get('password').strip()
 
-c.execute("CREATE TABLE IF NOT EXISTS users(username TEXT, password TEXT, friends TEXT, friend_reqs TEXT, pfp TEXT, invite_perms TEXT);")
-c.execute("CREATE TABLE IF NOT EXISTS tasks(name TEXT, id TEXT, description TEXT, deadline TEXT, status TEXT, category TEXT, users TEXT, visibility TEXT, join_perms TEXT)")
+        # check if password is correct, if not then reload page
+        if not data.auth(username, password):
+            return render_template("login.html", error="Username or password is incorrect")
 
-#join perms can be 'open', 'closed'
-#invite_perms can be 'open', 'closed'
-#visibility can be 'public', 'private'
+        # if password is correct redirect home
+        session["username"] = username
+        return redirect(url_for("home"))
+        
+    else:
+        return render_template("login.html")
 
-@app.route('/')
-def homepage():
-    return render_template('home.html')
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    
+    if request.method == 'POST':
+        username = request.form.get('username').strip().lower()
+        password = request.form.get('password').strip()
+
+        # reload page if no username or password was entered
+        if not username or not password:
+            return render_template("register.html", error="No username or password inputted")
+
+        # puts user into database unless if there's an error
+        execute_register = data.register_user(username, password)
+        if execute_register == "success":
+            session['username'] = username
+            return redirect(url_for("home"))
+        else:
+            return render_template("register.html", error = execute_register)
+    return render_template("register.html")
+
+
+@app.route("/home", methods=["GET", "POST"])
+def home():
+    if not 'username' in session:
+        return redirect(url_for("login"))
+    return render_template("home.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear() 
+    return redirect(url_for('login'))
+
 
 if __name__=='__main__':
     app.debug = True
