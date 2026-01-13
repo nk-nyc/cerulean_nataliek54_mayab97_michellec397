@@ -6,6 +6,7 @@
 
 import sqlite3                      # enable control of an sqlite database
 import hashlib                      # for consistent hashes
+import secrets                      # to generate ids
 
 DB_FILE="data.db"
 
@@ -25,8 +26,7 @@ def create_users_table():
                     friends         TEXT,
                     friend_reqs     TEXT,
                     pfp             TEXT,
-                    invite_perms    TEXT,
-                    id              TEXT    NOT NULL    PRIMARY KEY
+                    invite_perms    TEXT
                 )"""
     create_table(contents)
 
@@ -66,47 +66,39 @@ def get_all_users():
     db.close()
 
     return clean_list(data)
-    
-
-def get_username(id):
-    return get_field("users", "id", id, "username")
 
 
 # returns a list of the user's friends
-def get_friends(id):
-    # friends stored by their ids space separated
-    friends = get_field("users", "id", id, "friends")
+def get_friends(username):
+    # friends stored by their usernames space separated
+    friends = get_field("users", "username", username, "friends")
     friend_list = friends.split(" ")
     return friend_list
 
 
 # returns a list of the friend requests a user may accept or reject
-def get_friend_reqs(id):
-    # friend reqa stored by ids space separated
-    friend_reqs = get_field("users", "id", id, "friend_reqs")
+def get_friend_reqs(username):
+    # friend reqa stored by usernames space separated
+    friend_reqs = get_field("users", "username", username, "friend_reqs")
     friend_req_list = friend_reqs.split(' ')
     return friend_req_list
 
 
-def get_pfp(id):
-    return get_field("users", "id", id, "pfp")
+def get_pfp(username):
+    return get_field("users", "username", username, "pfp")
 
 
-def get_invite_perms(id):
-    return get_field("users", "id", id, "invite_perms")
+def get_invite_perms(username):
+    return get_field("users", "username", username, "invite_perms")
 
 
 #----------USERS-MUTATORS----------#
 
-def change_username(id, new_username):
 
-    if user_exists(new_username):
-        return "Username already exists"
+def change_password(username, old_passwd, new_passwd):
     
-    #table, ID_fieldname, ID, field, new_val
-    modify_field("users", "id", id, "username", new_username)
-    
-    return "success"
+    if not auth(username, old_passwd):
+        return "Incorrect old password"
 
 
 #----------LOGIN-REGISTER-AUTH----------#
@@ -135,7 +127,7 @@ def auth(username, password):
         return False
 
     # use ? for unsafe/user provided variables
-    passpointer = c.execute('SELECT password FROM userdata WHERE username = ?', (username,))
+    passpointer = c.execute('SELECT password FROM users WHERE username = ?', (username,))
     real_pass = passpointer.fetchone()[0]
 
     db.commit()
@@ -168,9 +160,9 @@ def register_user(username, password):
     # hash password here
     password = password.encode('utf-8')
     password = str(hashlib.sha256(password).hexdigest())
-
+    
     # use ? for unsafe/user provided variables
-    c.execute('INSERT INTO userdata VALUES (?, ?, "","","")', (username, password,))
+    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","")', (username, password,))
 
     db.commit()
     db.close()
@@ -242,6 +234,12 @@ def modify_field(table, ID_fieldname, ID, field, new_val):
 
     db.commit()
     db.close()
+
+
+# generate an id
+def gen_id():
+    # use secrets module to generate a random 32-byte string
+    return secrets.token_hex(32)
 
 
 #=============================MAIN=============================#
