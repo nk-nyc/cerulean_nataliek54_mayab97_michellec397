@@ -26,14 +26,15 @@ def create_users_table():
                     friends         TEXT,
                     friend_reqs     TEXT,
                     pfp             TEXT,
-                    invite_perms    TEXT
+                    invite_perms    TEXT,
+                    pending_invites TEXT
                 )"""
     create_table(contents)
 
 # tasks
 def create_tasks_table():
     contents =  """
-                CREATE TABLE IF NOT EXISTS users (
+                CREATE TABLE IF NOT EXISTS tasks (
                     name            TEXT    NOT NULL,
                     id              TEXT    NOT NULL    PRIMARY KEY,
                     description     TEXT,
@@ -72,22 +73,22 @@ def get_all_users():
 def get_friends(username):
     # friends stored by their usernames space separated
     friends = get_field("users", "username", username, "friends")
-    friend_list = friends.split(" ").clear("")
-    return friend_list
+    friend_list = friends.split()
+    return rm_empty(friend_list)
 
 
 # returns a list of the friend requests a user may accept or reject
 def get_friend_reqs(username):
     # friend reqa stored by usernames space separated
     friend_reqs = get_field("users", "username", username, "friend_reqs")
-    friend_req_list = friend_reqs.split(" ").clear("")
-    return friend_req_list
+    friend_req_list = friend_reqs.split()
+    return rm_empty(friend_req_list)
 
 
 def count_fr_reqs(username):
     fr_reqs = get_friend_reqs(username)
-    fr_list = fr_reqs.split(" ").clear("")
-    return len(fr_list)
+    fr_list =fr_reqs.split()
+    return len(rm_empty(fr_list))
     
 
 def get_pfp(username):
@@ -98,6 +99,16 @@ def get_pfp(username):
 
 def get_invite_perms(username):
     return get_field("users", "username", username, "invite_perms")
+
+
+def get_pending_task_invites(username):
+    invites = get_field("users", "username", username, "pending_invites")
+    return rm_empty(invites.split())
+
+
+def get_public_users():
+    users = get_all_users()
+    return [user for user in users if get_field("users", "username", user, "invite_perms" == "everyone")]
 
 
 #----------USERS-MUTATORS----------#
@@ -161,6 +172,23 @@ def set_invite_perms(username, newval):
     return "success"
 
 
+def invite_user(username, task):
+    p_task_invs = get_pending_task_invites(username)
+    p_task_invs += " " + task
+    modify_field("users", "username", username, "pending_invites", p_task_invs)
+
+
+def accept_task_invite(username, task_id):
+    rm_task_invite(username, task_id)
+    add_user(task_id, username)
+
+
+def rm_task_invite(username, task_id):
+    p_task_invs = get_pending_task_invites(username)
+    p_task_invs.replace(" " + task_id, "")
+    modify_field("users", "username", username, "pending_invites", p_task_invs)
+
+
 #----------LOGIN-REGISTER-AUTH----------#
 
 
@@ -222,7 +250,7 @@ def register_user(username, password):
     password = str(hashlib.sha256(password).hexdigest())
     
     # use ? for unsafe/user provided variables
-    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","")', (username, password,))
+    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","","")', (username, password,))
 
     db.commit()
     db.close()
@@ -234,7 +262,164 @@ def register_user(username, password):
 
 #----------TASKS-ACCESSORS----------#
 
+
+def all_tasks():
+    
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    data = c.execute('SELECT id FROM tasks').fetchall()
+
+    db.commit()
+    db.close()
+
+    return clean_list(data)
+
+
+def get_all_tasks(username):
+    
+    tasks = all_tasks()
+    user_tasks = []
+    for task in tasks:
+        users = get_task_users(task)
+        if username in users:
+            user_tasks += [task]
+    return user_tasks
+
+
+def get_friend_tasks(username):
+    
+    tasks = all_tasks()
+    friends = get_friends(username)
+    friend_tasks = []
+    for task in tasks:
+        users = get_task_users(task)
+        for friend in friends:
+            if friend in users:
+                friend_tasks += [task]
+    return friend_tasks
+
+
+def get_public_tasks():
+    
+    tasks = all_tasks()
+    return [task for task in tasks if get_field("tasks", "id", task, "visibility") == "public"]
+
+
+
+def get_all_tasks_owned(username):
+    
+    tasks = all_tasks()
+    return [task for task in tasks if get_field("tasks", "id", task, "owner") == username]
+
+
+def get_task_name(id):
+    return get_field("tasks", "id", id, "name")
+    
+
+def get_task_desc(id):
+    return get_field("tasks", "id", id, "description")
+
+
+def get_task_deadline(id):
+    return get_field("tasks", "id", id, "deadline")
+
+
+def get_task_status(id):
+    return get_field("tasks", "id", id, "status")
+
+
+def get_task_category(id):
+    return get_field("tasks", "id", id, "category")
+
+
+def get_task_users(id):
+    users = get_field("tasks", "id", id, "users")
+    return rm_empty(users.split())
+
+
+def get_task_visibility(id):
+    return get_field("tasks", "id", id, "visibility")
+
+
+def get_task_join_perms(id):
+    return get_field("tasks", "id", id, "join_perms")
+
+
+def get_task_owner(id):
+    return get_field("tasks", "id", id, "owner")
+    
+
+
 #----------TASKS-MUTATORS----------#
+
+
+def create_task(name, description, deadline, category, users_to_inv, visibility, join_perms, owner):
+    
+    id = gen_id()
+    status = "Not started"
+    
+    # add to db
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute('INSERT INTO tasks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                                        (name, id, description, deadline, status, category, " " + owner, visibility, join_perms, owner,))
+    db.commit()
+    db.close()
+    
+    # invite other users
+    for user in users_to_inv:
+        invite_user(user, id)
+    
+    return id
+        
+
+# only show this option for users who own the task
+def delete_task(id):
+    delete_row("tasks", "id", id)
+
+
+# only show this option for user who don't own the task
+def leave_task(task_id, username):
+    users = get_task_users(id)
+    users.remove(username)
+    task_users = " " + users.join(" ")
+    modify_field("tasks", "id", id, "users", task_users)
+
+
+def add_user(task_id, username):
+    users = get_task_users(id)
+    users += [username]
+    task_users = " " + users.join(" ")
+    modify_field("tasks", "id", id, "users", task_users)
+
+
+def set_task_description(task_id, desc):
+    modify_field("tasks", "id", id, "description", desc)
+
+
+def set_task_deadline(task_id, deadline):
+    modify_field("tasks", "id", id, "deadline", deadline)
+
+
+def set_task_status(task_id, status):
+    modify_field("tasks", "id", id, "status", status)
+
+
+def set_task_category(task_id, category):
+    modify_field("tasks", "id", id, "category", category)
+
+
+def set_task_visibility(task_id, vis):
+    modify_field("tasks", "id", id, "visibility", vis)
+
+
+def set_task_join_perms(task_id, perms):
+    modify_field("tasks", "id", id, "join_perms", perms)
+
+
+def set_task_owner(task_id, username):
+    modify_field("tasks", "id", id, "owner", username)
 
 
 #=============================GENERAL=HELPERS=============================#
@@ -278,10 +463,14 @@ def clean_list(raw_output):
 
     for lst in raw_output:
         for item in lst:
-            if str(item) != 'None':
+            if str(item) != 'None' and item != "":
                 clean_output += [item]
 
     return clean_output
+
+
+def rm_empty(lst):
+    return [item for item in lst if item]
 
 
 def modify_field(table, ID_fieldname, ID, field, new_val):
@@ -291,6 +480,17 @@ def modify_field(table, ID_fieldname, ID, field, new_val):
 
     # use ? for unsafe/user provided variables
     c.execute(f'UPDATE {table} SET {field} = ? WHERE {ID_fieldname} = ?', (new_val, ID,))
+
+    db.commit()
+    db.close()
+
+
+def delete_row(table, ID_fieldname, id):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    # use ? for unsafe/user provided variables
+    c.execute(f'DELETE FROM {table} WHERE {ID_fieldname} = ?', (id,))
 
     db.commit()
     db.close()
@@ -309,7 +509,10 @@ if __name__ == '__main__':
     create_users_table()
     create_tasks_table()
     register_user("Maya", "hi")
-    print(auth("Maya", "hi"))
-    print(user_exists("Maya"))
-    print(user_exists("J"))
-    print(auth("Maya", "a"))
+    register_user("Ethan", "test")
+    print(get_all_users())
+    create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
+    create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
+    print(all_tasks())
+    print(get_all_tasks("Maya"))
+    print(get_all_tasks("Ethan"))
