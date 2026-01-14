@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>ChoreRulean Home </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="../static/css/calendar.css" rel="stylesheet">
+</head>
+<body style="background-color: white;">
+  <!--CSS navbar-->
+  <div class="navbar">
+    <div class='nav'>
+      <a href='/'> ChoreRulean </a>
+    </div>
+    <div class="nav">
+      <a href='/'> Home </a>
+    </div>
+    <div class="nav">
+      <a href="/profile"> Profile </a>
+    </div>
+    <div class="nav">
+      <a href="/create"> Create </a>
+    </div>
+    <div class="nav">
+      <a href="/friends"> Friends </a>
+    </div>
+    <div class="nav">
+      <a href="/calendar"> Calendar </a>
+    </div>
+    <div class="nav">
+      <a href="/logout"> Log Out </a>
+    </div>
+  </div>
+  <div>
+    <div class='month'>
+      <ol>
+        <li class='prev' id='prev'>prev</li>
+        <li class='next' id='next'>next</li>
+        <li id='month'>August </li>
+      </ol>
+    </div>
+    <ul class='weekdays'>
+      <li> Mon </li>
+      <li> Tue </li>
+      <li> Wed </li>
+      <li> Thu </li>
+      <li> Fri </li>
+      <li> Sat </li>
+      <li> Sun </li>
+    </ul>
+    <ul class='days' id='days'>
+
+    </ul>
+  </div>
+
+  <button class="create">+ Create new task</button>
+  <script src='../static/js/calendar.js'></script>
+  </body>
+</html>
