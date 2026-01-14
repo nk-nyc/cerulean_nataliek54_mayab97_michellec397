@@ -96,11 +96,11 @@ def get_tasks():
 
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
-    
+
     # redirect to login if not logged in
     if not 'username' in session:
         return redirect(url_for('login'))
-    
+
     # set up vars for settings changes
     invite_options = ["no one", "friends", "everyone"]
     fr_list = data.get_friends(session['username'])
@@ -118,7 +118,7 @@ def profile():
     pfp = data.get_pfp(session['username'])
     if pfp == 'None':
         pfp = "happy cat"
-    
+
     # change password
     if 'password_form' in request.form:
         if request.form['old_pass'] == request.form['new_pass']:
@@ -128,19 +128,19 @@ def profile():
             return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
         else:
             return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-    
+
     # change pfp
     if 'pfp_form' in request.form:
         data.edit_pfp(session['username'], request.form.get('pfp'))
         pfp = request.form.get('pfp')
         return render_template('profile.html', user=session['username'], msg="Profile picture updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-    
+
     # change who can invite you to tasks
     if 'invite_form' in request.form:
         perms=request.form.get('invite')
         data.set_invite_perms(session['username'], perms)
         return render_template('profile.html', user=session['username'], msg="Settings updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-    
+
     # check if accepted a pending friend request
     for friend in fr_reqs:
         if f'accept {friend}' in request.form:
@@ -149,7 +149,7 @@ def profile():
         elif f'decline {friend}' in request.form:
             data.remove_fr(friend, session['username'])
             return render_template('profile.html', user=session['username'], msg="Friend request declined.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-    
+
     # send a friend request
     if 'fr_form' in request.form:
         user = request.form.get('fr_user')
@@ -168,7 +168,7 @@ def profile():
         # username doesn't exist
         else:
             return render_template('profile.html', user=session['username'], msg="Username does not exist.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-    
+
     # nothing happened, just display page
     return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
 
