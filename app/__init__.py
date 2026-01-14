@@ -96,24 +96,57 @@ def get_tasks():
 
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
+    
+    # redirect to login if not logged in
     if not 'username' in session:
         return redirect(url_for('login'))
     
+    # set up vars for settings changes
     invite_options = ["no one", "friends", "everyone"]
+    fr_list = data.get_friends(session['username'])
+    fr_reqs = data.get_friend_reqs(session['username'])
     perms = "no one"
     if 'invite_form' in request.form:
         perms=request.form.get('invite')
     
+    # change password
     if 'password_form' in request.form:
         if request.form['old_pass'] == request.form['new_pass']:
-            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.", invite_options=invite_options, perms=perms)
+            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
         if data.auth(session['username'], request.form['old_pass']):
             data.change_password(session['username'], request.form['old_pass'], request.form['new_pass'])
-            return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms)
+            return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
         else:
-            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms)
+            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
     
-    return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms)
+    # check if accepted a pending friend request
+    for friend in fr_reqs:
+        if f'accept {friend}' in request.form:
+            data.accept_fr(friend, session['username'])
+            return render_template('profile.html', user=session['username'], msg="Friend request accepted!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+        elif f'decline {friend}' in request.form:
+            data.remove_fr(friend, session['username'])
+            return render_template('profile.html', user=session['username'], msg="Friend request declined.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+    
+    # send a friend request
+    if 'fr_form' in request.form:
+        user = request.form.get('fr_user')
+        if data.user_exists(user):
+            if user == session['username']:
+                return render_template('profile.html', user=session['username'], msg="You can't send a friend request to yourself.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+            elif user in fr_reqs:
+                return render_template('profile.html', user=session['username'], msg="This user has already sent you a friend request!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+            elif session['username'] in data.get_friend_reqs(user):
+                return render_template('profile.html', user=session['username'], msg="You have already sent a friend request to this user!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+            else:
+                data.send_friend_req(session['username'], user)
+                return render_template('profile.html', user=session['username'], msg="Friend request sent!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+        # username doesn't exist
+        else:
+            return render_template('profile.html', user=session['username'], msg="Username does not exist.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+    
+    # nothing happened, just display page
+    return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
 
 
 if __name__=='__main__':

@@ -46,15 +46,19 @@
 		</nav>
 
 		<!--display name-->
-		<center><h1>{{ user }}</h1></center>
-		<!--display pfp-->
-		
+		<center>
+			<h1>{{ user }}</h1>
+			<!--display pfp-->
+			
+			<br>
+			<h2>Settings</h2>
+		</center>
 		<!--change password-->
 		Change password:
 		<form action="/profile" method="POST">
 				<input type="password" placeholder="old password" name="old_pass">
 				<br><input type="password" placeholder="new password" name="new_pass">
-				<br><input type="submit" name="password_form">
+				<br><input type="submit" name="password_form" value="change password">
 		</form>
 		<br>
 		<!--change invite perms (dropdown)-->
@@ -69,17 +73,40 @@
 									{% endif %}
 							{% endfor %}
 					</select>
-			<br><input type="submit" name="invite_form">
+			<input type="submit" name="invite_form" value="update">
 		</form>
 		<br>
 		<!--change pfp (dropdown)-->
 
+		<br>
+		<center><h2>Friends</h2></center>
+		<br>
 		<!--display friends-->
+		Friends:<br>
+		{% for friend in fr_list %}
+			{{ friend }} 
+		{% endfor %}
+		<br>
 
 		<!--display pending requests-->
-
+		Pending requests:
+		<br>
+		{% for user in fr_reqs %}
+			<form action="/profile" method="POST">
+				{{ user }}
+				<input type="submit" name="accept {{ user }}" value="accept">
+				<input type="submit" name="decline {{ user }}" value="decline">
+			</form>
+		{% endfor %}
+		<br>
 		<!--allow friend request sending-->
+		Send friend request:
+		<form action="/profile" method="POST">
+			<input type="text" name="fr_user" placeholder="username">
+			<input type="submit" name="fr_form" value="send request">
+		</form>
 		
+		<br>
 		<!--display a message (error, success msg) if there was one provided-->
 		{{ msg }}
 

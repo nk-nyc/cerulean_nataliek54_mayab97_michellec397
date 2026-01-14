@@ -139,8 +139,9 @@ def change_password(username, old_passwd, new_passwd):
 # only call this function if the receiver does not currently have a pending req from the sender
 def send_friend_req(sender, receiver):
     fr_reqs = get_friend_reqs(receiver)
-    fr_reqs += " " + sender
-    modify_field("users", "username", receiver, "friend_reqs", fr_reqs)
+    fr_reqs += [sender]
+    friend_reqs = " " + " ".join(fr_reqs)
+    modify_field("users", "username", receiver, "friend_reqs", friend_reqs)
 
 
 def accept_fr(sender, receiver):
@@ -148,19 +149,22 @@ def accept_fr(sender, receiver):
     remove_fr(sender, receiver)
     # add to friends
     r_friends = get_friends(receiver)
-    r_friends += " " + sender
-    modify_field("users", "username", receiver, "friends", r_friends)
+    r_friends += [sender]
+    r_friends_str = " " + " ".join(r_friends)
+    modify_field("users", "username", receiver, "friends", r_friends_str)
     s_friends = get_friends(sender)
-    s_friends += " " + receiver
-    modify_field("users", "username", sender, "friends", s_friends)
+    s_friends += [receiver]
+    s_friends_str = " " + " ".join(s_friends)
+    modify_field("users", "username", sender, "friends", s_friends_str)
     
 
 # aka deny fr (unless called as a helper)
 def remove_fr(sender, receiver):
     # remove sender from fr_reqs
     fr_reqs = get_friend_reqs(receiver)
-    fr_reqs.replace(" " + sender, "")
-    modify_field("users", "username", receiver, "friend_reqs", fr_reqs)
+    fr_reqs.remove(sender)
+    friend_reqs = " " + " ".join(fr_reqs)
+    modify_field("users", "username", receiver, "friend_reqs", friend_reqs)
 
 
 def edit_pfp(username):
