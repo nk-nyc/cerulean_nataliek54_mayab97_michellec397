@@ -11,6 +11,10 @@ import secrets                      # to generate ids
 DB_FILE="data.db"
 
 
+# users INVITE PERMS (who can invite this user to join tasks?): "" (no one), "friends", or "everyone"
+# tasks VISIBILITY (who can see this task?): "" (just you), "friends", "everyone"
+# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
+
 #=============================MAKE=TABLES=============================#
 
 
@@ -305,7 +309,7 @@ def get_friend_tasks(username):
 def get_public_tasks():
     
     tasks = all_tasks()
-    return [task for task in tasks if get_field("tasks", "id", task, "visibility") == "public"]
+    return [task for task in tasks if get_field("tasks", "id", task, "visibility") == "everyone"]
 
 
 
