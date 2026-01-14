@@ -89,6 +89,7 @@ def get_friend_reqs(username):
     return rm_empty(friend_req_list)
 
 
+# maybe for a notification icon w num unresponded to fr_reqs?
 def count_fr_reqs(username):
     fr_reqs = get_friend_reqs(username)
     fr_list =fr_reqs.split()
@@ -101,6 +102,7 @@ def get_pfp(username):
     return link
 
 
+# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
 def get_invite_perms(username):
     return get_field("users", "username", username, "invite_perms")
 
@@ -110,6 +112,7 @@ def get_pending_task_invites(username):
     return rm_empty(invites.split())
 
 
+# get users who set invite perms to "everyone"
 def get_public_users():
     users = get_all_users()
     return [user for user in users if get_field("users", "username", user, "invite_perms") == "everyone"]
@@ -141,10 +144,8 @@ def send_friend_req(sender, receiver):
 
 
 def accept_fr(sender, receiver):
-    
     # remove sender from fr_reqs
     remove_fr(sender, receiver)
-    
     # add to friends
     r_friends = get_friends(receiver)
     r_friends += " " + sender
@@ -154,8 +155,8 @@ def accept_fr(sender, receiver):
     modify_field("users", "username", sender, "friends", s_friends)
     
 
+# aka deny fr (unless called as a helper)
 def remove_fr(sender, receiver):
-    
     # remove sender from fr_reqs
     fr_reqs = get_friend_reqs(receiver)
     fr_reqs.replace(" " + sender, "")
@@ -166,12 +167,8 @@ def edit_pfp(username):
     return "tba"
 
 
+# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
 def set_invite_perms(username, newval):
-    
-    valid_options = ["", "friends", "anyone"]
-    if not newval in valid_options:
-        return "invalid option for invite_perms"
-    
     modify_field("users", "username", username, "invite_perms", newval)
     return "success"
 
@@ -188,6 +185,7 @@ def accept_task_invite(username, task_id):
     add_user(task_id, username)
 
 
+# aka deny task invite (unless called as a helper function)
 def rm_task_invite(username, task_id):
     p_task_invs = get_pending_task_invites(username)
     p_task_invs.remove(task_id)
@@ -269,6 +267,7 @@ def register_user(username, password):
 #----------TASKS-ACCESSORS----------#
 
 
+# return a list of all tasks in the DB
 def all_tasks():
     
     db = sqlite3.connect(DB_FILE)
@@ -282,8 +281,8 @@ def all_tasks():
     return clean_list(data)
 
 
-def get_all_tasks(username):
-    
+# all tasks a user is involved with (not necessarily owner)
+def get_all_tasks(username): 
     tasks = all_tasks()
     user_tasks = []
     for task in tasks:
@@ -293,28 +292,26 @@ def get_all_tasks(username):
     return user_tasks
 
 
+# all tasks by friends if friends set the right visibility
 def get_friend_tasks(username):
-    
     tasks = all_tasks()
     friends = get_friends(username)
     friend_tasks = []
     for task in tasks:
-        users = get_task_users(task)
-        for friend in friends:
-            if friend in users:
-                friend_tasks += [task]
+        if get_task_visibility(task) != "":
+            users = get_task_users(task)
+            for friend in friends:
+                if friend in users:
+                    friend_tasks += [task]
     return friend_tasks
 
 
 def get_public_tasks():
-    
     tasks = all_tasks()
     return [task for task in tasks if get_field("tasks", "id", task, "visibility") == "everyone"]
 
 
-
 def get_all_tasks_owned(username):
-    
     tasks = all_tasks()
     return [task for task in tasks if get_field("tasks", "id", task, "owner") == username]
 
@@ -344,10 +341,12 @@ def get_task_users(id):
     return rm_empty(users.split())
 
 
+# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
 def get_task_visibility(id):
     return get_field("tasks", "id", id, "visibility")
 
 
+# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
 def get_task_join_perms(id):
     return get_field("tasks", "id", id, "join_perms")
 
@@ -416,10 +415,12 @@ def set_task_category(task_id, category):
     modify_field("tasks", "id", task_id, "category", category)
 
 
+# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
 def set_task_visibility(task_id, vis):
     modify_field("tasks", "id", task_id, "visibility", vis)
 
 
+# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
 def set_task_join_perms(task_id, perms):
     modify_field("tasks", "id", task_id, "join_perms", perms)
 
