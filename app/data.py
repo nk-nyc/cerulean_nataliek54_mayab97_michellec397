@@ -472,7 +472,7 @@ def clean_list(raw_output):
 
 
 def rm_empty(lst):
-    return [item for item in lst if item]
+    return [item for item in lst if item and str(item) != "None"]
 
 
 def modify_field(table, ID_fieldname, ID, field, new_val):
@@ -517,7 +517,9 @@ if __name__ == '__main__':
     print(all_tasks())
     print(get_all_tasks("Maya"))
     set_task_join_perms(room, "everyone")
-    print(get_public_tasks())
+    #print(get_public_tasks())
     invite_user("Maya", room)
+    print(get_pending_task_invites("Maya"))
     accept_task_invite("Maya", room)
+    print(get_pending_task_invites("Maya"))
     print(get_all_tasks("Maya"))
