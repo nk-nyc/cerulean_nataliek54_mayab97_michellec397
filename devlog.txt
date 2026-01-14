@@ -12,3 +12,7 @@ mayaB -- 2026-01-13 01:04
 - Added as many accessors and mutators as I could think of
 - Got login and register to work
 - No compile errors from data yet but not merging current state with main bc ik some functions don't work as intended yet
+
+natalieK -- 2026-01-13 20:11
+- added working calendar (omg that took so long)
+- still need to do create tasks! yay! waiting on task functions
