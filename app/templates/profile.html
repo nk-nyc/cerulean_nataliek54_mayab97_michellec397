@@ -58,7 +58,7 @@
 		<form action="/profile" method="POST">
 					<select id="pfp" name="pfp">
 							{% for item in pfp_dict %}
-									{% if item == perms %}
+									{% if item == pfp %}
 											<option value={{ item }} selected>{{ item }}</option>
 									{% else %}
 											<option value={{ item }}>{{ item }}</option>

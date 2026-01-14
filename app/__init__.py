@@ -107,9 +107,7 @@ def profile():
     if len(fr_list) == 0:
         fr_list = ['None yet!']
     fr_reqs = data.get_friend_reqs(session['username'])
-    perms = "no one"
-    if 'invite_form' in request.form:
-        perms=request.form.get('invite')
+    perms = data.get_invite_perms(session['username'])
     pfp_dict = {"happy_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F00%2Ff6%2Fe0%2F00f6e04b05b731670e13a1347c32d64c.jpg&f=1&nofb=1&ipt=0d2b6923a92fe59721e0029d8c45198857c993b9fb72ed3a396b9d75a3b1b515",
                 "toast_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fdf%2Fb1%2F76%2Fdfb176eedc5fcae081e2ad767a52ed01.jpg&f=1&nofb=1&ipt=5ae127651458ee89055e8f474d668acb6a99346a84d9201d0a5035a3f069b840",
                 "hungry_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F0f%2F5b%2F17%2F0f5b1779b42e7c161182cb01f2282039.jpg&f=1&nofb=1&ipt=c61418d2fa1866be7fc04661862085b45006d524694d4caf10f8d63862e1505c",
@@ -136,6 +134,12 @@ def profile():
         data.edit_pfp(session['username'], request.form.get('pfp'))
         pfp = request.form.get('pfp')
         return render_template('profile.html', user=session['username'], msg="Profile picture updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+    
+    # change who can invite you to tasks
+    if 'invite_form' in request.form:
+        perms=request.form.get('invite')
+        data.set_invite_perms(session['username'], perms)
+        return render_template('profile.html', user=session['username'], msg="Settings updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
     
     # check if accepted a pending friend request
     for friend in fr_reqs:
