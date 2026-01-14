@@ -99,16 +99,21 @@ def profile():
     if not 'username' in session:
         return redirect(url_for('login'))
     
+    invite_options = ["no one", "friends", "everyone"]
+    perms = "no one"
+    if 'invite_form' in request.form:
+        perms=request.form.get('invite')
+    
     if 'password_form' in request.form:
         if request.form['old_pass'] == request.form['new_pass']:
-            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.")
+            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.", invite_options=invite_options, perms=perms)
         if data.auth(session['username'], request.form['old_pass']):
             data.change_password(session['username'], request.form['old_pass'], request.form['new_pass'])
-            return render_template('profile.html', user=session['username'], msg="Password updated successfully!")
+            return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms)
         else:
-            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.")
+            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms)
     
-    return render_template('profile.html', user=session['username'], msg="")
+    return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms)
 
 
 if __name__=='__main__':

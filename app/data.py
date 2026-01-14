@@ -11,9 +11,9 @@ import secrets                      # to generate ids
 DB_FILE="data.db"
 
 
-# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
-# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
-# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
+# users INVITE PERMS (who can invite this user to join their tasks?): "no one", "friends", or "everyone"
+# tasks VISIBILITY (who can see this task on their homepage?): "no one", "friends", "everyone"
+# tasks JOIN PERMS (who can join this task without an invite?): "no one", "friends", "everyone"
 
 #=============================MAKE=TABLES=============================#
 
@@ -30,7 +30,7 @@ def create_users_table():
                     friends         TEXT,
                     friend_reqs     TEXT,
                     pfp             TEXT,
-                    invite_perms    TEXT,
+                    invite_perms    TEXT    NOT NULL,
                     pending_invites TEXT
                 )"""
     create_table(contents)
@@ -46,8 +46,8 @@ def create_tasks_table():
                     status          TEXT    NOT NULL,
                     category        TEXT    NOT NULL,
                     users           TEXT    NOT NULL,
-                    visibility      TEXT,
-                    join_perms      TEXT,
+                    visibility      TEXT    NOT NULL,
+                    join_perms      TEXT    NOT NULL,
                     owner           TEXT    NOT NULL
                 )"""
     create_table(contents)
@@ -102,7 +102,7 @@ def get_pfp(username):
     return link
 
 
-# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
+# users INVITE PERMS (who can invite this user to join their tasks?): "no one", "friends", or "everyone"
 def get_invite_perms(username):
     return get_field("users", "username", username, "invite_perms")
 
@@ -167,7 +167,7 @@ def edit_pfp(username):
     return "tba"
 
 
-# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
+# users INVITE PERMS (who can invite this user to join their tasks?): "no one", "friends", or "everyone"
 def set_invite_perms(username, newval):
     modify_field("users", "username", username, "invite_perms", newval)
     return "success"
@@ -254,7 +254,7 @@ def register_user(username, password):
     password = str(hashlib.sha256(password).hexdigest())
     
     # use ? for unsafe/user provided variables
-    c.execute('INSERT INTO users VALUES (?, ?, "","","","","")', (username, password,))
+    c.execute('INSERT INTO users VALUES (?, ?, "","","","no one","")', (username, password,))
 
     db.commit()
     db.close()
@@ -341,12 +341,12 @@ def get_task_users(id):
     return rm_empty(users.split())
 
 
-# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
+# tasks VISIBILITY (who can see this task on their homepage?): "no one", "friends", or "everyone"
 def get_task_visibility(id):
     return get_field("tasks", "id", id, "visibility")
 
 
-# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
+# tasks JOIN PERMS (who can join this task without an invite?): "no one", "friends", or "everyone"
 def get_task_join_perms(id):
     return get_field("tasks", "id", id, "join_perms")
 
@@ -415,12 +415,12 @@ def set_task_category(task_id, category):
     modify_field("tasks", "id", task_id, "category", category)
 
 
-# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
+# tasks VISIBILITY (who can see this task on their homepage?): "no one", "friends", or "everyone"
 def set_task_visibility(task_id, vis):
     modify_field("tasks", "id", task_id, "visibility", vis)
 
 
-# tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
+# tasks JOIN PERMS (who can join this task without an invite?): "no one", "friends", or "everyone"
 def set_task_join_perms(task_id, perms):
     modify_field("tasks", "id", task_id, "join_perms", perms)
 

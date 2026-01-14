@@ -50,19 +50,28 @@
 		<!--display pfp-->
 		
 		<!--change password-->
-		<div class="sign3">Change password:</div>
-    <div class="forms">
-		    <form action="/profile" method="POST">
-            <input type="password" placeholder="old password" name="old_pass">
-            <br><input type="password" placeholder="new password" name="new_pass">
-            <br><input type="submit" name="password_form">
-          </form>
-    </div>
-		
-		<!--change description-->
-
+		Change password:
+		<form action="/profile" method="POST">
+				<input type="password" placeholder="old password" name="old_pass">
+				<br><input type="password" placeholder="new password" name="new_pass">
+				<br><input type="submit" name="password_form">
+		</form>
+		<br>
 		<!--change invite perms (dropdown)-->
-
+		Change who can invite you to join tasks:
+		<form action="/profile" method="POST">
+					<select id="invite" name="invite">
+							{% for item in invite_options %}
+									{% if item == perms %}
+											<option value={{ item }} selected>{{ item }}</option>
+									{% else %}
+											<option value={{ item }}>{{ item }}</option>
+									{% endif %}
+							{% endfor %}
+					</select>
+			<br><input type="submit" name="invite_form">
+		</form>
+		<br>
 		<!--change pfp (dropdown)-->
 
 		<!--display friends-->
