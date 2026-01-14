@@ -10,6 +10,7 @@ import random
 import urllib.request
 import json
 import data
+import sqlite3
 
 # initialize tables
 data.create_users_table()
@@ -80,6 +81,17 @@ def calendar():
     if not 'username' in session:
         return redirect(url_for('login'))
     return render_template('calendar.html')
+
+@app.route('/gettasks')
+def get_tasks():
+    db = sqlite3.connect('data.db')
+    c = db.cursor()
+    username = session['username']
+    c.execute("SELECT FROM tasks * WHERE instr(users, {username})")
+    data = c.fetchall()
+    db.commit()
+    db.close()
+    return data
 
 
 if __name__=='__main__':
