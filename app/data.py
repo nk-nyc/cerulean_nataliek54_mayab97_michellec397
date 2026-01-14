@@ -327,6 +327,7 @@ def get_task_desc(id):
     return get_field("tasks", "id", id, "description")
 
 
+# YYYY-MM-DD
 def get_task_deadline(id):
     return get_field("tasks", "id", id, "deadline")
 
@@ -419,6 +420,7 @@ def set_task_description(task_id, desc):
     modify_field("tasks", "id", task_id, "description", desc)
 
 
+# YYYY-MM-DD
 def set_task_deadline(task_id, deadline):
     modify_field("tasks", "id", task_id, "deadline", deadline)
 

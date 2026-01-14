@@ -6,6 +6,7 @@
 
 from flask import Flask, render_template, send_file
 from flask import session, request, redirect, url_for
+from datetime import datetime
 import random
 import urllib.request
 import json
@@ -68,7 +69,33 @@ def register():
 def home():
     if not 'username' in session:
         return redirect(url_for("login"))
-    return render_template("home.html")
+
+    all_tasks = get_all_tasks(user)
+
+    # list of tasks done
+    tasks_done_unsorted = [task for task in all_tasks if get_task_status(task) == "done"]
+    tasks_done_sorted = sort_by_deadline(tasks_done)
+    tasks_done = [get_task_info(task) for task in tasks_done_sorted]
+
+    # list of tasks in progress
+    tasks_ip_unsorted = [task for task in all_tasks if get_task_status(task) == "in progress"]
+    tasks_ip_sorted = sort_by_deadline(tasks_done)
+    tasks_ip = [get_task_info(task) for task in tasks_ip_sorted]
+
+    # list of tasks not started
+    tasks_ns_unsorted = [task for task in all_tasks if get_task_status(task) == "not started"]
+    tasks_ns_sorted = sort_by_deadline(tasks_done)
+    tasks_done = [get_task_info(task) for task in tasks_ns_sorted]
+
+    # tasks friends are up to
+
+    return render_template("home.html", tasks_done=tasks_done, tasks_ip=tasks_ip, tasks_ns=tasks_ns)
+
+
+# helper for home
+def sort_by_deadline(task_lst):
+    s_list = sorted(task_lst, key=lambda item: datetime.strptime(get_task_deadline(item), '%Y-%m-%d'))
+    return s_list
 
 
 @app.route("/logout")
