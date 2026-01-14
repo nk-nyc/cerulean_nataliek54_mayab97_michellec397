@@ -2,7 +2,7 @@
 # SoftDev pd 5
 # P02: Makers Makin' It, Act I
 # 2025-01-11
-# Time spent: not that much on this file tbh, mostly recycling. ~40 mins?
+# Time spent: ~3 hrs
 
 import sqlite3                      # enable control of an sqlite database
 import hashlib                      # for consistent hashes
@@ -11,8 +11,8 @@ import secrets                      # to generate ids
 DB_FILE="data.db"
 
 
-# users INVITE PERMS (who can invite this user to join tasks?): "" (no one), "friends", or "everyone"
-# tasks VISIBILITY (who can see this task?): "" (just you), "friends", "everyone"
+# users INVITE PERMS (who can invite this user to join their tasks?): "" (no one), "friends", or "everyone"
+# tasks VISIBILITY (who can see this task on their homepage?): "" (just you), "friends", "everyone"
 # tasks JOIN PERMS (who can join this task without an invite?): "" (no one), "friends", "everyone"
 
 #=============================MAKE=TABLES=============================#
@@ -389,7 +389,7 @@ def delete_task(id):
 def leave_task(task_id, username):
     users = get_task_users(task_id)
     users.remove(username)
-    task_users = " " + users.join(" ")
+    task_users = " " + " ".join(users)
     modify_field("tasks", "id", task_id, "users", task_users)
 
 
@@ -518,12 +518,15 @@ if __name__ == '__main__':
     register_user("Ethan", "test")
     oven = create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
     room = create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
-    print(all_tasks())
-    print(get_all_tasks("Maya"))
     set_task_join_perms(room, "everyone")
-    #print(get_public_tasks())
+    set_task_visibility(room, "everyone")
+    print(get_public_tasks())
     invite_user("Maya", room)
-    print(get_pending_task_invites("Maya"))
     accept_task_invite("Maya", room)
-    print(get_pending_task_invites("Maya"))
     print(get_all_tasks("Maya"))
+    leave_task(room, "Maya")
+    print(get_all_tasks("Maya"))
+    delete_task(room)
+    set_task_visibility(room, "friends")
+    print(get_public_tasks())
+    print(all_tasks())
