@@ -94,6 +94,13 @@ def get_tasks():
     return data
 
 
+@app.route('/profile')
+def profile():
+    if not 'username' in session:
+        return redirect(url_for('login'))
+    return render_template('profile.html')
+
+
 if __name__=='__main__':
     app.debug = True
     app.run()
