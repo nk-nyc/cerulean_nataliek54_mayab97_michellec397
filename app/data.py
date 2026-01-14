@@ -61,7 +61,7 @@ def create_tasks_table():
 
 # returns a list of usernames
 def get_all_users():
-    
+
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
 
@@ -94,7 +94,7 @@ def count_fr_reqs(username):
     fr_reqs = get_friend_reqs(username)
     fr_list =fr_reqs.split()
     return len(rm_empty(fr_list))
-    
+
 
 def get_pfp(username):
     link = get_field("users", "username", username, "pfp")
@@ -122,16 +122,16 @@ def get_public_users():
 
 
 def change_password(username, old_passwd, new_passwd):
-    
+
     if not auth(username, old_passwd):
         return "Incorrect old password"
-    
+
     if new_passwd == "":
         return "Password cannot be empty"
-    
+
     new_passwd = new_passwd.encode('utf-8')
     new_passwd = str(hashlib.sha256(new_passwd).hexdigest())
-    
+
     modify_field("users", "username", username, "password", new_passwd)
     return "success"
 
@@ -156,7 +156,7 @@ def accept_fr(sender, receiver):
     s_friends += [receiver]
     s_friends_str = " " + " ".join(s_friends)
     modify_field("users", "username", sender, "friends", s_friends_str)
-    
+
 
 # aka deny fr (unless called as a helper)
 def remove_fr(sender, receiver):
@@ -244,7 +244,7 @@ def register_user(username, password):
     if user_exists(username):
         #raise ValueError("Username already exists")
         return "Username already exists"
-    
+
     if password == "":
         #raise ValueError("You must enter a non-empty password")
         return "Password cannot be empty"
@@ -255,7 +255,7 @@ def register_user(username, password):
     # hash password here
     password = password.encode('utf-8')
     password = str(hashlib.sha256(password).hexdigest())
-    
+
     # use ? for unsafe/user provided variables
     c.execute('INSERT INTO users VALUES (?, ?, "","","","no one","")', (username, password,))
 
@@ -272,7 +272,7 @@ def register_user(username, password):
 
 # return a list of all tasks in the DB
 def all_tasks():
-    
+
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
 
@@ -285,7 +285,7 @@ def all_tasks():
 
 
 # all tasks a user is involved with (not necessarily owner)
-def get_all_tasks(username): 
+def get_all_tasks(username):
     tasks = all_tasks()
     user_tasks = []
     for task in tasks:
@@ -321,7 +321,7 @@ def get_all_tasks_owned(username):
 
 def get_task_name(id):
     return get_field("tasks", "id", id, "name")
-    
+
 
 def get_task_desc(id):
     return get_field("tasks", "id", id, "description")
@@ -356,31 +356,44 @@ def get_task_join_perms(id):
 
 def get_task_owner(id):
     return get_field("tasks", "id", id, "owner")
-    
+
+
+def get_task_info(id):
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+
+    data = c.execute('SELECT * FROM tasks').fetchall()
+
+    db.commit()
+    db.close()
+
+    return clean_list(data)
+
 
 
 #----------TASKS-MUTATORS----------#
 
 
 def create_task(name, description, deadline, category, users_to_inv, visibility, join_perms, owner):
-    
+
     id = gen_id()
     status = "Not started"
-    
+
     # add to db
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute('INSERT INTO tasks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+    c.execute('INSERT INTO tasks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                                         (name, id, description, deadline, status, category, " " + owner, visibility, join_perms, owner,))
     db.commit()
     db.close()
-    
+
     # invite other users
     for user in users_to_inv:
         invite_user(user, id)
-    
+
     return id
-        
+
 
 # only show this option for users who own the task
 def delete_task(id):
