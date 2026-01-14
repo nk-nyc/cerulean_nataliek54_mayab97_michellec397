@@ -94,11 +94,21 @@ def get_tasks():
     return data
 
 
-@app.route('/profile')
+@app.route('/profile', methods=["GET", "POST"])
 def profile():
     if not 'username' in session:
         return redirect(url_for('login'))
-    return render_template('profile.html')
+    
+    if 'password_form' in request.form:
+        if request.form['old_pass'] == request.form['new_pass']:
+            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.")
+        if data.auth(session['username'], request.form['old_pass']):
+            data.change_password(session['username'], request.form['old_pass'], request.form['new_pass'])
+            return render_template('profile.html', user=session['username'], msg="Password updated successfully!")
+        else:
+            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.")
+    
+    return render_template('profile.html', user=session['username'], msg="")
 
 
 if __name__=='__main__':

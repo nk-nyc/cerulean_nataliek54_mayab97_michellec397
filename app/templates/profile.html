@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
     Natalie Keiger (PM), Michelle Chen, Maya Berchin
     Task Calendar By cerulean
@@ -5,19 +6,73 @@
     p02 ChoreRulean
     Jan 2026
 -->
-<!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+		<!-- Bootstrap -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <title>{{ user }}</title>
-</head>
+		<title>{{ user }}'s Profile</title>
+	</head>
 
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+	<body>
+		
+		<nav class="navbar navbar-expand-lg p-1" style="background-color: #222024 ;">
+			<h1 class="navbar-brand text-light p-1 mt-2">ChoreRulean</h1>
+			<div class="navbar">
+					<ul class="navbar-nav">
+						<li class="nav-item active">
+							<a class="nav-link text-light" href="/">Home </a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-light" href="/profile">Profile</a>
+						</li>
+						<li class="nav-item active">
+							<a class="nav-link text-light" href="/create">Create</a>
+						</li>
+					<li class="nav-item active">
+							<a class="nav-link text-light" href="/friends">Friends</a>
+						</li>
+						<li class="nav-item active">
+								<a class="nav-link text-light" href="/calendar">Calendar</a>
+							</li>
+						<li class="nav-item">
+							<a class="nav-link text-light" href="/logout">Logout</a>
+						</li>
+					</ul>
+			</div>
+		</nav>
 
-</body>
+		<!--display name-->
+		<center><h1>{{ user }}</h1></center>
+		<!--display pfp-->
+		
+		<!--change password-->
+		<div class="sign3">Change password:</div>
+    <div class="forms">
+		    <form action="/profile" method="POST">
+            <input type="password" placeholder="old password" name="old_pass">
+            <br><input type="password" placeholder="new password" name="new_pass">
+            <br><input type="submit" name="password_form">
+          </form>
+    </div>
+		
+		<!--change description-->
+
+		<!--change invite perms (dropdown)-->
+
+		<!--change pfp (dropdown)-->
+
+		<!--display friends-->
+
+		<!--display pending requests-->
+
+		<!--allow friend request sending-->
+		
+		<!--display a message (error, success msg) if there was one provided-->
+		{{ msg }}
+
+	</body>
 </html>
