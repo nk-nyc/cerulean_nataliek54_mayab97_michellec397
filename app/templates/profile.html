@@ -14,110 +14,115 @@
 		<!-- Bootstrap -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-		<title>{{ user }}'s Profile</title>
-	</head>
+ <title>{{ user }}'s Profile</title>
+</head>
 
-	<body>
-		
-		<nav class="navbar navbar-expand-lg p-1" style="background-color: #222024 ;">
-			<h1 class="navbar-brand text-light p-1 mt-2">ChoreRulean</h1>
-			<div class="navbar">
-					<ul class="navbar-nav">
-						<li class="nav-item active">
-							<a class="nav-link text-light" href="/">Home </a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-light" href="/profile">Profile</a>
-						</li>
-						<li class="nav-item active">
-							<a class="nav-link text-light" href="/create">Create</a>
-						</li>
-					<li class="nav-item active">
-							<a class="nav-link text-light" href="/friends">Friends</a>
-						</li>
-						<li class="nav-item active">
-								<a class="nav-link text-light" href="/calendar">Calendar</a>
-							</li>
-						<li class="nav-item">
-							<a class="nav-link text-light" href="/logout">Logout</a>
-						</li>
-					</ul>
-			</div>
-		</nav>
+<body class="bg-light">
+
+ <!-- Navbar -->
+ <nav class="navbar navbar-expand-lg px-3 border-bottom bg-white">
+	 <span class="navbar-brand fw-semibold">ChoreRulean</span>
+
+	 <ul class="navbar-nav ms-auto flex-row gap-4">
+		 <li class="nav-item"><a class="nav-link p-0" href="/">Home</a></li>
+		 <li class="nav-item"><a class="nav-link p-0" href="/profile">Profile</a></li>
+		 <li class="nav-item"><a class="nav-link p-0" href="/create">Create</a></li>
+		 <li class="nav-item"><a class="nav-link p-0" href="/friends">Friends</a></li>
+		 <li class="nav-item"><a class="nav-link p-0" href="/calendar">Calendar</a></li>
+		 <li class="nav-item"><a class="nav-link p-0 text-danger" href="/logout">Logout</a></li>
+	 </ul>
+ </nav>
 
 		<!--display name-->
-		<center>
-			<h1>{{ user }}</h1>
+		<div class="container py-4" style="max-width: 700px;">
+
+	    <div class="text-center mb-6">
+	      <h1 class="fw-semibold mb-2">{{ user }}</h1>
 			<!--display pfp-->
-			 <img src="{{ pfp_dict[pfp] }}" alt="{{ pfp }}" width="200" height="200"> 
+			<img src="{{ pfp_dict[pfp] }}" alt="{{ pfp }}" width="160" height="160">
+</div>
 			<br>
-			<h2>Settings</h2>
+			<div class="border rounded p-5 bg-white mb-4">
+		 <h4 class="fw-semibold mb-3">Settings</h4>
 		</center>
 		<!--change pfp (dropdown)-->
 		Change pfp:
-		<form action="/profile" method="POST">
-					<select id="pfp" name="pfp">
-							{% for item in pfp_dict %}
-									{% if item == pfp %}
-											<option value={{ item }} selected>{{ item }}</option>
-									{% else %}
-											<option value={{ item }}>{{ item }}</option>
-									{% endif %}
-							{% endfor %}
-					</select>
-			<input type="submit" name="pfp_form" value="update">
-		</form>
+		<form action="/profile" method="POST" class="mb-3">
+			 <label class="form-label">Profile picture</label>
+			 <div class="d-flex gap-2">
+				 <select class="form-select" name="pfp">
+					 {% for item in pfp_dict %}
+						 {% if item == pfp %}
+							 <option value="{{ item }}" selected>{{ item }}</option>
+						 {% else %}
+							 <option value="{{ item }}">{{ item }}</option>
+						 {% endif %}
+					 {% endfor %}
+				 </select>
+				 <button class="btn btn-outline-primary" type="submit" name="pfp_form">Update</button>
+			 </div>
+		 </form>
 		<br>
 		<!--change password-->
 		Change password:
-		<form action="/profile" method="POST">
-				<input type="password" placeholder="old password" name="old_pass">
-				<br><input type="password" placeholder="new password" name="new_pass">
-				<br><input type="submit" name="password_form" value="change password">
-		</form>
+		<form action="/profile" method="POST" class="mb-3">
+	<label class="form-label">Change password</label>
+	<input type="password" class="form-control mb-2" placeholder="Old password" name="old_pass">
+	<input type="password" class="form-control mb-2" placeholder="New password" name="new_pass">
+	<button class="btn btn-outline-primary" type="submit" name="password_form">Change</button>
+</form>
 		<br>
 		<!--change invite perms (dropdown)-->
 		Change who can invite you to join tasks:
 		<form action="/profile" method="POST">
-					<select id="invite" name="invite">
-							{% for item in invite_options %}
-									{% if item == perms %}
-											<option value={{ item }} selected>{{ item }}</option>
-									{% else %}
-											<option value={{ item }}>{{ item }}</option>
-									{% endif %}
-							{% endfor %}
-					</select>
-			<input type="submit" name="invite_form" value="update">
-		</form>
+	         <label class="form-label">Who can invite you to tasks</label>
+	         <div class="">
+	           <select class="form-select" name="invite">
+	             {% for item in invite_options %}
+	               {% if item == perms %}
+	                 <option value="{{ item }}" selected>{{ item }}</option>
+	               {% else %}
+	                 <option value="{{ item }}">{{ item }}</option>
+	               {% endif %}
+	             {% endfor %}
+	           </select>
+	           <button class="btn btn-outline-primary" type="submit" name="invite_form">Update</button>
+	         </div>
+	       </form>
+	     </div>
 		<br>
-		<center><h2>Friends</h2></center>
 		<br>
 		<!--display friends-->
-		Friends:<br>
+		<div class="border rounded p-5 bg-white mb-4">
+	<h4 class="fw-semibold mb-2">Friends</h4>
+	<div class="text">
 		{% for friend in fr_list %}
-			{{ friend }} 
+			<div>{{ friend }}</div>
 		{% endfor %}
-		<br>
-		<br>
+	</div>
+</div>
 		<!--display pending requests-->
-		Pending requests:
-		<br>
+		<div class="border rounded p-5 bg-white mb-4">
+		<h4 class="fw-semibold mb-2">Pending requests</h4>
+
 		{% for user in fr_reqs %}
 			<form action="/profile" method="POST">
-				{{ user }}
-				<input type="submit" name="accept {{ user }}" value="accept">
-				<input type="submit" name="decline {{ user }}" value="decline">
+				<div class="me-auto">{{ user }}</div>
+				<button class="btn btn-sm btn-outline-success" type="submit" name="accept {{ user }}">Accept</button>
+				<button class="btn btn-sm btn-outline-danger" type="submit" name="decline {{ user }}">Decline</button>
 			</form>
 		{% endfor %}
-		<br>
-		<!--allow friend request sending-->
-		Send friend request:
-		<form action="/profile" method="POST">
-			<input type="text" name="fr_user" placeholder="username">
-			<input type="submit" name="fr_form" value="send request">
-		</form>
-		
+	</div>
+
+    <!-- Send request -->
+    <div class="border rounded p-5 bg-white mb-3">
+      <h4 class="fw-semibold">Send friend request</h4>
+      <form action="/profile" method="POST">
+        <input type="text" class="form-control" name="fr_user" placeholder="Username">
+        <button class="btn btn-primary" type="submit" name="fr_form">Send</button>
+      </form>
+    </div>
+
 		<br>
 		<!--display a message (error, success msg) if there was one provided-->
 		{{ msg }}
