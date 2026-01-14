@@ -42,7 +42,7 @@ def create_tasks_table():
                     name            TEXT    NOT NULL,
                     id              TEXT    NOT NULL    PRIMARY KEY,
                     description     TEXT,
-                    deadline        TEXT,
+                    deadline        DATE    NOT NULL,
                     status          TEXT    NOT NULL,
                     category        TEXT    NOT NULL,
                     users           TEXT    NOT NULL,
@@ -517,17 +517,3 @@ if __name__ == '__main__':
     create_tasks_table()
     register_user("Maya", "hi")
     register_user("Ethan", "test")
-    oven = create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
-    room = create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
-    set_task_join_perms(room, "everyone")
-    set_task_visibility(room, "everyone")
-    print(get_public_tasks())
-    invite_user("Maya", room)
-    accept_task_invite("Maya", room)
-    print(get_all_tasks("Maya"))
-    leave_task(room, "Maya")
-    print(get_all_tasks("Maya"))
-    delete_task(room)
-    set_task_visibility(room, "friends")
-    print(get_public_tasks())
-    print(all_tasks())
