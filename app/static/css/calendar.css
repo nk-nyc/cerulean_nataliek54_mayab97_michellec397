@@ -99,3 +99,40 @@ body {font-family: Verdana, sans-serif;}
   padding-left: 5px;
   border-radius: 4px;
 }
+
+.create_menu {
+  background-color: lightgray;
+  border-radius: 10px;
+  padding: 10px;
+  padding-left: 30px;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+}
+
+.btn {
+  width: 30%;
+  border-radius: 10px;
+}
+
+.input {
+  border-radius: 10px;
+  width: 60%;  
+  border-width: 0px;
+  padding: 5px;
+}
+
+.big_input {
+  border-radius: 10px;
+  width: 80%;  
+  height: 50px;  
+  border-width: 0px; 
+}
+
+.beegtext {
+  font-size: 20px;
+}
+
+.smoltext {
+  font-size: 12px;
+}
