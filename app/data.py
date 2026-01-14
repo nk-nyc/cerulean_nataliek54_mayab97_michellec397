@@ -108,7 +108,7 @@ def get_pending_task_invites(username):
 
 def get_public_users():
     users = get_all_users()
-    return [user for user in users if get_field("users", "username", user, "invite_perms" == "everyone")]
+    return [user for user in users if get_field("users", "username", user, "invite_perms") == "everyone"]
 
 
 #----------USERS-MUTATORS----------#
@@ -174,8 +174,9 @@ def set_invite_perms(username, newval):
 
 def invite_user(username, task):
     p_task_invs = get_pending_task_invites(username)
-    p_task_invs += " " + task
-    modify_field("users", "username", username, "pending_invites", p_task_invs)
+    p_task_invs += [task]
+    pending_invites = " " + " ".join(p_task_invs)
+    modify_field("users", "username", username, "pending_invites", pending_invites)
 
 
 def accept_task_invite(username, task_id):
@@ -185,8 +186,9 @@ def accept_task_invite(username, task_id):
 
 def rm_task_invite(username, task_id):
     p_task_invs = get_pending_task_invites(username)
-    p_task_invs.replace(" " + task_id, "")
-    modify_field("users", "username", username, "pending_invites", p_task_invs)
+    p_task_invs.remove(task_id)
+    pending_invites = " " + " ".join(p_task_invs)
+    modify_field("users", "username", username, "pending_invites", pending_invites)
 
 
 #----------LOGIN-REGISTER-AUTH----------#
@@ -250,7 +252,7 @@ def register_user(username, password):
     password = str(hashlib.sha256(password).hexdigest())
     
     # use ? for unsafe/user provided variables
-    c.execute(f'INSERT INTO users VALUES (?, ?, "","","","","")', (username, password,))
+    c.execute('INSERT INTO users VALUES (?, ?, "","","","","")', (username, password,))
 
     db.commit()
     db.close()
@@ -381,45 +383,45 @@ def delete_task(id):
 
 # only show this option for user who don't own the task
 def leave_task(task_id, username):
-    users = get_task_users(id)
+    users = get_task_users(task_id)
     users.remove(username)
     task_users = " " + users.join(" ")
-    modify_field("tasks", "id", id, "users", task_users)
+    modify_field("tasks", "id", task_id, "users", task_users)
 
 
 def add_user(task_id, username):
-    users = get_task_users(id)
+    users = get_task_users(task_id)
     users += [username]
-    task_users = " " + users.join(" ")
-    modify_field("tasks", "id", id, "users", task_users)
+    task_users = " " + " ".join(users)
+    modify_field("tasks", "id", task_id, "users", task_users)
 
 
 def set_task_description(task_id, desc):
-    modify_field("tasks", "id", id, "description", desc)
+    modify_field("tasks", "id", task_id, "description", desc)
 
 
 def set_task_deadline(task_id, deadline):
-    modify_field("tasks", "id", id, "deadline", deadline)
+    modify_field("tasks", "id", task_id, "deadline", deadline)
 
 
 def set_task_status(task_id, status):
-    modify_field("tasks", "id", id, "status", status)
+    modify_field("tasks", "id", task_id, "status", status)
 
 
 def set_task_category(task_id, category):
-    modify_field("tasks", "id", id, "category", category)
+    modify_field("tasks", "id", task_id, "category", category)
 
 
 def set_task_visibility(task_id, vis):
-    modify_field("tasks", "id", id, "visibility", vis)
+    modify_field("tasks", "id", task_id, "visibility", vis)
 
 
 def set_task_join_perms(task_id, perms):
-    modify_field("tasks", "id", id, "join_perms", perms)
+    modify_field("tasks", "id", task_id, "join_perms", perms)
 
 
 def set_task_owner(task_id, username):
-    modify_field("tasks", "id", id, "owner", username)
+    modify_field("tasks", "id", task_id, "owner", username)
 
 
 #=============================GENERAL=HELPERS=============================#
@@ -510,9 +512,12 @@ if __name__ == '__main__':
     create_tasks_table()
     register_user("Maya", "hi")
     register_user("Ethan", "test")
-    print(get_all_users())
-    create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
-    create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
+    oven = create_task("clean oven", "ew dirty", "2 mins from now", "chore", [], "", "", "Maya")
+    room = create_task("clean room", "ew dirty", "2 mins from now", "chore", [], "", "", "Ethan")
     print(all_tasks())
     print(get_all_tasks("Maya"))
-    print(get_all_tasks("Ethan"))
+    set_task_join_perms(room, "everyone")
+    print(get_public_tasks())
+    invite_user("Maya", room)
+    accept_task_invite("Maya", room)
+    print(get_all_tasks("Maya"))
