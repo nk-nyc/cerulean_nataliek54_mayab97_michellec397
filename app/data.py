@@ -167,14 +167,13 @@ def remove_fr(sender, receiver):
     modify_field("users", "username", receiver, "friend_reqs", friend_reqs)
 
 
-def edit_pfp(username):
-    return "tba"
+def edit_pfp(username, newval):
+    modify_field("users", "username", username, "pfp", newval)
 
 
 # users INVITE PERMS (who can invite this user to join their tasks?): "no one", "friends", or "everyone"
 def set_invite_perms(username, newval):
     modify_field("users", "username", username, "invite_perms", newval)
-    return "success"
 
 
 def invite_user(username, task):

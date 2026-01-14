@@ -49,10 +49,25 @@
 		<center>
 			<h1>{{ user }}</h1>
 			<!--display pfp-->
-			
+			 <img src="{{ pfp_dict[pfp] }}" alt="{{ pfp }}" width="200" height="200"> 
 			<br>
 			<h2>Settings</h2>
 		</center>
+		<!--change pfp (dropdown)-->
+		Change pfp:
+		<form action="/profile" method="POST">
+					<select id="pfp" name="pfp">
+							{% for item in pfp_dict %}
+									{% if item == perms %}
+											<option value={{ item }} selected>{{ item }}</option>
+									{% else %}
+											<option value={{ item }}>{{ item }}</option>
+									{% endif %}
+							{% endfor %}
+					</select>
+			<input type="submit" name="pfp_form" value="update">
+		</form>
+		<br>
 		<!--change password-->
 		Change password:
 		<form action="/profile" method="POST">
@@ -75,9 +90,6 @@
 					</select>
 			<input type="submit" name="invite_form" value="update">
 		</form>
-		<br>
-		<!--change pfp (dropdown)-->
-
 		<br>
 		<center><h2>Friends</h2></center>
 		<br>
