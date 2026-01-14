@@ -104,6 +104,8 @@ def profile():
     # set up vars for settings changes
     invite_options = ["no one", "friends", "everyone"]
     fr_list = data.get_friends(session['username'])
+    if len(fr_list) == 0:
+        fr_list = ['None yet!']
     fr_reqs = data.get_friend_reqs(session['username'])
     perms = "no one"
     if 'invite_form' in request.form:
@@ -134,6 +136,8 @@ def profile():
         if data.user_exists(user):
             if user == session['username']:
                 return render_template('profile.html', user=session['username'], msg="You can't send a friend request to yourself.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
+            elif user in fr_list:
+                return render_template('profile.html', user=session['username'], msg="User is already your friend!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
             elif user in fr_reqs:
                 return render_template('profile.html', user=session['username'], msg="This user has already sent you a friend request!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list)
             elif session['username'] in data.get_friend_reqs(user):
