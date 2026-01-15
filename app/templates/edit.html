@@ -29,5 +29,82 @@
 			</div>
 		</nav>
 		<center><h1>{{ task_name }}</h1></center>
+		<!--ONE SECTION-->
+		<!--edit name-->
+		Edit task name:
+		<form action="/edit" method="POST">
+			<input type="text" class="form-control" name="task_name" placeholder="Task name">
+			<button class="btn btn-outline-primary" type="submit" name="name_form">Rename</button>
+		</form>
+		<!--edit description-->
+		Edit task description:
+		<form action="/edit" method="POST">
+			<input type="text" class="form-control" name="task_desc" placeholder="Task description">
+			<button class="btn btn-outline-primary" type="submit" name="desc_form">Update</button>
+		</form>
+		<!--ONE SECTION-->
+		<!--edit deadline TBA (steal some calendar JS from Natalie)-->
+		<!--edit status-->
+		Edit the status of this task:
+		<form action="/edit" method="POST">
+			<select class="form-select" name="status">
+				{% for item in status_options %}
+					{% if item == status %}
+						<option value="{{ item }}" selected>{{ item }}</option>
+					{% else %}
+						<option value="{{ item }}">{{ item }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+			<button class="btn btn-outline-primary" type="submit" name="status_form">Update</button>
+		</form>
+		<!--ONE SECTION-->
+		<!--edit visiblity-->
+		Edit who can see this task:
+		<form action="/edit" method="POST">
+			<select class="form-select" name="vis">
+				{% for item in vis_options %}
+					{% if item == vis %}
+						<option value="{{ item }}" selected>{{ item }}</option>
+					{% else %}
+						<option value="{{ item }}">{{ item }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+			<button class="btn btn-outline-primary" type="submit" name="vis_form">Update</button>
+		</form>
+		<!--edit join perms-->
+		Edit who can join this task uninvited:
+		<form action="/edit" method="POST">
+			<select class="form-select" name="join">
+				{% for item in join_options %}
+					{% if item == status %}
+						<option value="{{ item }}" selected>{{ item }}</option>
+					{% else %}
+						<option value="{{ item }}">{{ item }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+			<button class="btn btn-outline-primary" type="submit" name="join_form">Update</button>
+		</form>
+		<!--ONE SECTION-->
+		<!--invite other users-->
+		Invite users to join this task:
+		<form action="/edit" method="POST">
+			<input type="text" class="form-control" name="task_inv" placeholder="Username">
+			<button class="btn btn-outline-primary" type="submit" name="inv_form">Invite</button>
+		</form>
+		<!--remove users-->
+		Remove users from this task:
+		<form action="/edit" method="POST">
+			<input type="text" class="form-control" name="task_rm" placeholder="Username">
+			<button class="btn btn-outline-primary" type="submit" name="rm_form">Remove</button>
+		</form>
+		<!--LAST SECTION-->
+		<!--delete task-->
+		Delete task (PERMANENT):
+		<form action="/edit" method="POST">
+			<button class="btn btn-outline-primary" type="submit" name="del_form">Delete</button>
+		</form>
   </body>
 </html>
