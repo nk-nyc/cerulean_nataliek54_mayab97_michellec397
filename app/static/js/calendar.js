@@ -129,10 +129,60 @@ function goForward(month, year) {
 
 // create tasks functions
 
+function clearBox() {
+  box = document.getElementById('create_menu')
+  box.innerHTML = ''
+}
+
 create = document.getElementById('create')
 
-function createEvent() {
+create.addEventListener('click', () => createEvent())
 
+function createEvent() {
+  box = document.getElementById('create_menu')
+  box.innerHTML = `
+    <div>
+      <h1 class="beegtext">Task name:</h1>
+    </div>
+    <div>
+      <input class='input' type="text" name="title" class="form-control" placeholder="Task name" required autofocus>
+    </div>
+        <div>
+      <h1 class="beegtext">Task description:</h1>
+    </div>
+    <div>
+      <input class='big_input' type="text" name="title" class="form-control" placeholder="Task description" required autofocus>
+    </div>
+    <div>
+      <h1 class="beegtext">Deadline:</h1>
+    </div>
+    <div>
+      <input class='input' type="date" name="deadline" class="form-control" placeholder="Deadline" required autofocus>
+    </div>
+    <div>
+      <h1 class="beegtext">Category:</h1>
+    </div>
+    <div>
+      <select class='input' name="category" requred autofocus>
+        <option value="chore">Chore</option>
+        <option value="work">Work</option>
+        <option value="errand">Errand</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div>
+      <h1 class="beegtext">Join Permissions:</h1>
+      <p class="smoltext"><i>This determines who can join your task.</i></p>
+    </div>
+    <div>
+      <select class='input' name="join_perms" required autofocus>
+        <option value="everyone">Everyone</option>
+        <option value="friends">Friends</option>
+        <option value="No one">No one</option>
+      </select>
+    </div>
+    <button id='submit' type="submit" class="btn">Create</button>`
+  
 }
 
 // create.addEventListener('click', createEvent)
