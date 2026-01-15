@@ -12,3 +12,20 @@ mayaB -- 2026-01-13 01:04
 - Added as many accessors and mutators as I could think of
 - Got login and register to work
 - No compile errors from data yet but not merging current state with main bc ik some functions don't work as intended yet
+
+natalieK -- 2026-01-13 20:11
+- added working calendar (omg that took so long)
+- still need to do create tasks! yay! waiting on task functions
+
+mayaB -- 2026-01-13 22:53
+- finished middleware, probably (works with what I currently tested, can't think of anything I'm missing)
+- finished profile: change pfp, change passwd, change who can invite you to tasks, see list of friends, send/accept/decline friend requests. But it's unstyled.
+- minor updates on design doc to reflect changes in storing things that I found along the way (adding NOT NULL to some stuff, making deadline a date)
+
+natalieK -- 2026-01-14 20:43
+- implemented creation of tasks
+- implemented tasks displaying on calendar
+
+mayaB -- 2026-01-15 01:04
+- wrote homepage backend and very ugly frontend with no styling
+- wrote edit html and nonfunctioning but also noncrashing backend
