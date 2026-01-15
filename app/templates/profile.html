@@ -17,20 +17,27 @@
  <title>{{ user }}'s Profile</title>
 </head>
 
-<body class="bg-light">
+<body style="background-color: white;">
 
  <!-- Navbar -->
- <nav class="navbar navbar-expand-lg px-3 border-bottom bg-white">
-	 <span class="navbar-brand fw-semibold">ChoreRulean</span>
-
-	 <ul class="navbar-nav ms-auto flex-row gap-4">
-		 <li class="nav-item"><a class="nav-link p-0" href="/">Home</a></li>
-		 <li class="nav-item"><a class="nav-link p-0" href="/profile">Profile</a></li>
-		 <li class="nav-item"><a class="nav-link p-0" href="/friends">Friends</a></li>
-		 <li class="nav-item"><a class="nav-link p-0" href="/calendar">Calendar</a></li>
-		 <li class="nav-item"><a class="nav-link p-0 text-danger" href="/logout">Log Out</a></li>
-	 </ul>
- </nav>
+ <div class="navbar">
+	 <div class='nav'>
+		 <a href='/'> ChoreRulean </a>
+	 </div>
+	 <div class="nav">
+		 <a href='/'> Home </a>
+	 </div>
+	 <div class="nav">
+		 <a href="/profile"> Profile </a>
+	 </div>
+	 <div class="nav">
+		 <a href="/calendar"> Calendar </a>
+	 </div>
+	 <div class="nav">
+		 <a href="/logout"> Log Out </a>
+	 </div>
+ </div>
+ <div>
 
 		<!--display name-->
 		<div class="container py-4" style="max-width: 700px;">
@@ -45,7 +52,6 @@
 		 <h4 class="fw-semibold mb-3">Settings</h4>
 		</center>
 		<!--change pfp (dropdown)-->
-		Change pfp:
 		<form action="/profile" method="POST" class="mb-3">
 			 <label class="form-label">Profile picture</label>
 			 <div class="d-flex gap-2">
@@ -63,7 +69,6 @@
 		 </form>
 		<br>
 		<!--change password-->
-		Change password:
 		<form action="/profile" method="POST" class="mb-3">
 	<label class="form-label">Change password</label>
 	<input type="password" class="form-control mb-2" placeholder="Old password" name="old_pass">
