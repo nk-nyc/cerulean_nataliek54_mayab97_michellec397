@@ -73,6 +73,10 @@ def home():
         return redirect(url_for("login"))
 
     all_tasks = data.get_all_tasks(session['username'])
+<<<<<<< HEAD
+=======
+    print(all_tasks)
+>>>>>>> 2ac527b368cfb48185a7853b366f79b42ffb12a1
 
     for task in all_tasks:
         if f'join {task}' in request.form:
