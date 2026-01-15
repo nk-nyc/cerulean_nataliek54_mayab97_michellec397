@@ -55,11 +55,15 @@ body {font-family: Verdana, sans-serif;}
   text-transform: uppercase;
   letter-spacing: 3px;
   list-style-type: none;
+  font-family: Afacad, sans-serif;
 }
 
-.month .prev {
-  float: left;
-  padding-top: 10px;
+.month .prev .triangle-left{
+  width: 0;
+  height: -4;
+  border-top: 25px solid transparent;
+  border-right: 50px solid #ffffff;
+  border-bottom: 25px solid transparent;
 }
 
 .month .next {
@@ -117,16 +121,16 @@ body {font-family: Verdana, sans-serif;}
 
 .input {
   border-radius: 10px;
-  width: 60%;  
+  width: 60%;
   border-width: 0px;
   padding: 5px;
 }
 
 .big_input {
   border-radius: 10px;
-  width: 80%;  
-  height: 50px;  
-  border-width: 0px; 
+  width: 80%;
+  height: 50px;
+  border-width: 0px;
 }
 
 .beegtext {
