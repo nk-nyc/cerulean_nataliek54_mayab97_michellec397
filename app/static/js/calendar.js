@@ -18,6 +18,7 @@ async function getTasks() {
   if (response.ok) {
     const data = await response.json();
     const tasks = data
+    console.log(tasks)
     return tasks
   }
 }
@@ -41,7 +42,7 @@ function refreshDays(month, year) {
   document.getElementById('days').innerHTML = '';
 
   // fix days of the week
-  first_day = getFirstDayOfTheWeek(month, year) 
+  first_day = getFirstDayOfTheWeek(month, year)
   // 0 is saturday, 1 is sunday, etc. 0 -> 5, 1 -> 6, 2 -> 0
   // plus five mod seven
   numToAdd = (first_day + 4) % 7
@@ -75,7 +76,7 @@ function refreshDays(month, year) {
     newNode.appendChild(document.createTextNode(i + 1))
     parentDiv.appendChild(newNode);
   } //add back in all elements. will add tasks to this later
-  
+
   highlighted_item = document.getElementById(String(date));
   if (today.getMonth() == month) {
     highlighted_item.style.backgroundColor = 'lightBlue';
@@ -88,7 +89,7 @@ async function renderCalendar(month, year) {
   refreshDays(month, year);
   date = today.getDate();
   monthelement.innerText = monthNames[month] + ' ' + year;
-  tasks = await getTasks() 
+  tasks = await getTasks()
   // add tasks to the calendar
   console.log(tasks)
   for (let i = 0; i < tasks.length; i++) {
@@ -100,23 +101,23 @@ async function renderCalendar(month, year) {
       let status = tasks[i][2]
       console.log(status)
       if (status == 'Not started') {
-        taskDate.innerHTML = day + `
+        taskDate.innerHTML += `
         <div class='ns'>
           <p>` + taskName + `</p>
         </div>
         `
       } else if (status == 'In progress') {
-        taskDate.innerHTML = day + `
+        taskDate.innerHTML += `
         <div class='ip'>
           <p>` + taskName + `</p>
         </div>
         `
       } else {
-        taskDate.innerHTML = day + `
+        taskDate.innerHTML += `
         <div class='Done'>
           <p>` + taskName + `</p>
         </div>
-        `        
+        `
       }
 
     }
@@ -237,7 +238,7 @@ function createEvent() {
     </div>
     <button id='submit' type="submit" class="btn">Create</button>
     </form>
-    </div>  
+    </div>
     `
 }
 
