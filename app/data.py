@@ -366,6 +366,8 @@ def get_task_info(id):
     info += [id]
     info += [get_task_desc(id)]
     info += [get_task_deadline(id)]
+    info += [get_task_status(id)]
+    info += [get_task_users(id)]
     info += [get_task_users(id)]
     info += [get_task_visibility(id)]
     info += [get_task_join_perms(id)]
