@@ -20,6 +20,7 @@ data.create_tasks_table()
 app = Flask(__name__)
 app.secret_key = 'supersecre'
 
+edit_task = ""
 
 @app.route('/', methods=["GET", "POST"])
 def login():
@@ -72,6 +73,16 @@ def home():
         return redirect(url_for("login"))
 
     all_tasks = data.get_all_tasks(session['username'])
+    
+    for task in all_tasks:
+        if f'join {task}' in request.form:
+            data.add_user(task, session['username'])
+        elif f'leave {task}' in request.form:
+            data.leave_task(task, session['username'])
+        elif f'edit {task}' in request.form:
+            global edit_task
+            edit_task = task
+            return redirect(url_for("edit"))
 
     # list of tasks done
     tasks_done_unsorted = [task for task in all_tasks if data.get_task_status(task).lower() == "done"]
@@ -99,6 +110,15 @@ def home():
 def sort_by_deadline(task_lst):
     s_list = sorted(task_lst, key=lambda item: datetime.strptime(data.get_task_deadline(item), '%Y-%m-%d'))
     return s_list
+
+
+@app.route("/edit", methods=["GET", "POST"])
+def edit():
+    global edit_task
+    to_edit = edit_task
+    edit_task = ""
+    task_info = data.get_task_info(to_edit)
+    return render_template("edit.html", task_name=task_info[0])
 
 
 @app.route("/logout")

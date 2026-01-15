@@ -36,9 +36,9 @@
 				{% for task in tasks_done %}
 					{{ task[0] }} due {{ task[3] }}
 					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task }}">Edit</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
 					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task }}">Leave</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
 					{% endif %}
 					<br>
 				{% endfor %}
@@ -49,9 +49,9 @@
 				{% for task in tasks_ip %}
 					{{ task[0] }} due {{ task[3] }}
 					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task }}">Edit</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
 					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task }}">Leave</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
 					{% endif %}
 					<br>
 				{% endfor %}
@@ -62,9 +62,9 @@
 				{% for task in tasks_ns %}
 					{{ task[0] }} due {{ task[3] }}
 					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task }}">Edit</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
 					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task }}">Leave</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
 					{% endif %}
 					<br>
 				{% endfor %}
@@ -75,7 +75,7 @@
 				{% for task in friend_tasks %}
 					{{ task[9] }}: {{ task[0] }} due {{ task[3] }}
 					{% if task[7] != "no one" %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task }}">Join</button>
+						<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
 					{% endif %}
 					<br>
 				{% endfor %}
