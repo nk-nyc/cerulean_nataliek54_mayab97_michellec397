@@ -40,7 +40,7 @@
 		<!--tasks ip-->
 		<div>
 			<h3>Tasks in progress:</h3>
-			{% for task in tasks_done %}
+			{% for task in tasks_ip %}
 				{{ task[0] }} due {{ task[3] }}
 				<br>
 			{% endfor %}
@@ -48,7 +48,7 @@
 		<!--tasks ns-->
 		<div>
 			<h3>Tasks not started:</h3>
-			{% for task in tasks_done %}
+			{% for task in tasks_ns %}
 				{{ task[0] }} due {{ task[3] }}
 				<br>
 			{% endfor %}
@@ -56,7 +56,7 @@
 		<!--friend tasks-->
 		<div>
 			<h3>Tasks friends are up to:</h3>
-			{% for task in tasks_done %}
+			{% for task in friend_tasks %}
 				{{ task[0] }} due {{ task[3] }}
 				<br>
 			{% endfor %}

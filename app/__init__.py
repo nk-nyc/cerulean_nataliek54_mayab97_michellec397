@@ -74,17 +74,17 @@ def home():
     all_tasks = data.get_all_tasks(session['username'])
 
     # list of tasks done
-    tasks_done_unsorted = [task for task in all_tasks if data.get_task_status(task) == "done"]
+    tasks_done_unsorted = [task for task in all_tasks if data.get_task_status(task).lower() == "done"]
     tasks_done_sorted = sort_by_deadline(tasks_done_unsorted)
     tasks_done = [data.get_task_info(task) for task in tasks_done_sorted]
 
     # list of tasks in progress
-    tasks_ip_unsorted = [task for task in all_tasks if data.get_task_status(task) == "in progress"]
+    tasks_ip_unsorted = [task for task in all_tasks if data.get_task_status(task).lower() == "in progress"]
     tasks_ip_sorted = sort_by_deadline(tasks_ip_unsorted)
     tasks_ip = [data.get_task_info(task) for task in tasks_ip_sorted]
 
     # list of tasks not started
-    tasks_ns_unsorted = [task for task in all_tasks if data.get_task_status(task) == "not started"]
+    tasks_ns_unsorted = [task for task in all_tasks if data.get_task_status(task).lower() == "not started"]
     tasks_ns_sorted = sort_by_deadline(tasks_ns_unsorted)
     tasks_ns = [data.get_task_info(task) for task in tasks_ns_sorted]
 
@@ -97,7 +97,7 @@ def home():
 
 # helper for home
 def sort_by_deadline(task_lst):
-    s_list = sorted(task_lst, key=lambda item: datetime.strptime(get_task_deadline(item), '%Y-%m-%d'))
+    s_list = sorted(task_lst, key=lambda item: datetime.strptime(data.get_task_deadline(item), '%Y-%m-%d'))
     return s_list
 
 
@@ -121,7 +121,7 @@ def calendar():
         cat = request.form.get('category')
         perms = request.form.get('join_perms')
         vis = request.form.get('visibility')
-        data.create_task(task, description, deadline, cat, '', vis, perms, session['username'])
+        data.create_task(task, description, deadline, cat, "not started", vis, perms, session['username'])
     #send tasks to js
     return render_template('calendar.html')
 
