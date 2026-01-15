@@ -177,10 +177,11 @@ def set_invite_perms(username, newval):
 
 
 def invite_user(username, task):
-    p_task_invs = get_pending_task_invites(username)
-    p_task_invs += [task]
-    pending_invites = " " + " ".join(p_task_invs)
-    modify_field("users", "username", username, "pending_invites", pending_invites)
+    if not username == '':
+        p_task_invs = get_pending_task_invites(username)
+        p_task_invs += [task]
+        pending_invites = " " + " ".join(p_task_invs)
+        modify_field("users", "username", username, "pending_invites", pending_invites)
 
 
 def accept_task_invite(username, task_id):
