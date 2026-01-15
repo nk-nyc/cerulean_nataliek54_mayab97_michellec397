@@ -21,3 +21,7 @@ mayaB -- 2026-01-13 22:53
 - finished middleware, probably (works with what I currently tested, can't think of anything I'm missing)
 - finished profile: change pfp, change passwd, change who can invite you to tasks, see list of friends, send/accept/decline friend requests. But it's unstyled.
 - minor updates on design doc to reflect changes in storing things that I found along the way (adding NOT NULL to some stuff, making deadline a date)
+
+natalieK -- 2026-01-14 20:43
+- implemented creation of tasks
+- implemented tasks displaying on calendar
