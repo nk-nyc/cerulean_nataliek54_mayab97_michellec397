@@ -61,11 +61,11 @@
   <!-- info -->
   <form method="POST" class="mb-5">
 
-    <center><h5>Task Name: {{ task_name }} </h5></center>
+    <center><h5>Task Name: {{ task_lst[0] }} </h5></center>
 
     <div class="mb-3">
       <label class="form-label">Description</label>
-      <textarea class="form-control" rows="3" name="description">{{ task_desc }}</textarea>
+      <textarea class="form-control" rows="3" name="description">{{ task_lst[2] }}</textarea>
     </div>
 
     <div class="row mb-3">
@@ -74,9 +74,9 @@
 
         <label class="form-label">Status</label>
         <select class="form-select" name="status">
-          <option {% if task_status == "Not started" %}selected{% endif %}>Not started</option>
-          <option {% if task_status == "In progress" %}selected{% endif %}>In progress</option>
-          <option {% if task_status == "Completed" %}selected{% endif %}>Completed</option>
+          <option {% if status == "Not started" %}selected{% endif %}>Not started</option>
+          <option {% if status == "In progress" %}selected{% endif %}>In progress</option>
+          <option {% if status == "Completed" %}selected{% endif %}>Completed</option>
         </select>
     </div>
 
@@ -91,18 +91,18 @@
     <div class="mb-3">
       <label class="form-label">Visibility</label>
       <select class="form-select" name="visibility">
-        <option {% if visibility=="no one" %}selected{% endif %}>Nobody</option>
-        <option {% if visibility=="friends" %}selected{% endif %}>Friends Only</option>
-        <option {% if visibility=="everyone" %}selected{% endif %}>Everyone</option>
+        <option {% if vis=="no one" %}selected{% endif %}>Nobody</option>
+        <option {% if vis=="friends" %}selected{% endif %}>Friends Only</option>
+        <option {% if vis=="everyone" %}selected{% endif %}>Everyone</option>
       </select>
     </div>
 
     <div class="mb-3">
       <label class="form-label">Join Permissions</label>
       <select class="form-select" name="join_perms">
-        <option {% if join_perms=="no one" %}selected{% endif %}>Nobody</option>
-        <option {% if join_perms=="friends" %}selected{% endif %}>Friends Only</option>
-        <option {% if join_perms=="everyone" %}selected{% endif %}>Everyone</option>
+        <option {% if join=="no one" %}selected{% endif %}>Nobody</option>
+        <option {% if join=="friends" %}selected{% endif %}>Friends Only</option>
+        <option {% if join=="everyone" %}selected{% endif %}>Everyone</option>
       </select>
     </div>
 
