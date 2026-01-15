@@ -417,6 +417,10 @@ def add_user(task_id, username):
     modify_field("tasks", "id", task_id, "users", task_users)
 
 
+def set_task_name(task_id, name):
+    modify_field("tasks", "id", task_id, "name", name)
+
+
 def set_task_description(task_id, desc):
     modify_field("tasks", "id", task_id, "description", desc)
 

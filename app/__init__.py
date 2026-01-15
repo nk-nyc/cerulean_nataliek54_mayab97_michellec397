@@ -114,11 +114,75 @@ def sort_by_deadline(task_lst):
 
 @app.route("/edit", methods=["GET", "POST"])
 def edit():
+    
     global edit_task
     to_edit = edit_task
-    edit_task = ""
+    
+    task_users = data.get_task_users(to_edit)
+    if session['username'] in task_users:
+        task_users.remove(session['username'])
+    
+    status_options = ["not started", "in progress", "done"]
+    vis_options = ["no one", "friends", "everyone"]
+    join_options = vis_options
+    msg = ""
+    
+    status = data.get_task_status(to_edit)
+    vis = data.get_task_visibility(to_edit)
+    join = data.get_task_join_perms(to_edit)
+    
+    if 'name_form' in request.form:
+        name = request.form.get('task_name')
+        if len(name) > 0 and not name.isspace():
+            data.set_task_name(to_edit, name)
+        else:
+            msg="Invalid task name."
+    
+    if 'desc_form' in request.form:
+        desc = request.form.get('task_desc')
+        data.set_task_description(to_edit, desc)
+    
+    # edit deadline tba
+    
+    if 'status_form' in request.form:
+        status = request.form.get('status')
+        data.set_task_status(to_edit, status)
+    
+    if 'vis_form' in request.form:
+        vis = request.form.get('vis')
+        data.set_task_visibility(to_edit, vis)
+    
+    if 'join_form' in request.form:
+        join = request.form.get('join')
+        data.set_task_join_perms(to_edit, join)
+    
+    if 'inv_form' in request.form:
+        user = request.form.get('task_inv')
+        if data.user_exists(user):
+            if user == session['username']:
+                msg="You can't invite yourself to this task."
+            elif user in task_users:
+                msg="User is already partaking in this task."
+            elif task in data.get_pending_task_invites(user):
+                msg="You have already invited this user to this task."
+            else:
+                data.invite_user(user, to_edit)
+        # username doesn't exist
+        else:
+            msg="Username does not exist."
+    
+    for user in task_users:
+        if f'rm {user}' in request.form:
+            data.leave_task(to_edit, user)
+    
+    if 'del_form' in request.form:
+        data.delete_task(to_edit)
+        edit_task = ""
+        return redirect(url_for('home.html'))
+    
     task_info = data.get_task_info(to_edit)
-    return render_template("edit.html", task_name=task_info[0])
+    
+    return render_template('edit.html', msg=msg, task_lst=task_info, status=status, status_options=status_options, vis=vis, vis_options=vis_options, join=join, join_options=join_options)
 
 
 @app.route("/logout")
