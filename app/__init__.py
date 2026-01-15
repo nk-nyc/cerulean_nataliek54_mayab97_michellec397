@@ -67,29 +67,32 @@ def register():
 
 @app.route("/home", methods=["GET", "POST"])
 def home():
+    
     if not 'username' in session:
         return redirect(url_for("login"))
 
-    all_tasks = get_all_tasks(user)
+    all_tasks = data.get_all_tasks(session['username'])
 
     # list of tasks done
-    tasks_done_unsorted = [task for task in all_tasks if get_task_status(task) == "done"]
-    tasks_done_sorted = sort_by_deadline(tasks_done)
-    tasks_done = [get_task_info(task) for task in tasks_done_sorted]
+    tasks_done_unsorted = [task for task in all_tasks if data.get_task_status(task) == "done"]
+    tasks_done_sorted = sort_by_deadline(tasks_done_unsorted)
+    tasks_done = [data.get_task_info(task) for task in tasks_done_sorted]
 
     # list of tasks in progress
-    tasks_ip_unsorted = [task for task in all_tasks if get_task_status(task) == "in progress"]
-    tasks_ip_sorted = sort_by_deadline(tasks_done)
-    tasks_ip = [get_task_info(task) for task in tasks_ip_sorted]
+    tasks_ip_unsorted = [task for task in all_tasks if data.get_task_status(task) == "in progress"]
+    tasks_ip_sorted = sort_by_deadline(tasks_ip_unsorted)
+    tasks_ip = [data.get_task_info(task) for task in tasks_ip_sorted]
 
     # list of tasks not started
-    tasks_ns_unsorted = [task for task in all_tasks if get_task_status(task) == "not started"]
-    tasks_ns_sorted = sort_by_deadline(tasks_done)
-    tasks_done = [get_task_info(task) for task in tasks_ns_sorted]
+    tasks_ns_unsorted = [task for task in all_tasks if data.get_task_status(task) == "not started"]
+    tasks_ns_sorted = sort_by_deadline(tasks_ns_unsorted)
+    tasks_ns = [data.get_task_info(task) for task in tasks_ns_sorted]
 
     # tasks friends are up to
+    friend_task_ids = data.get_friend_tasks(session['username'])
+    friend_tasks = [data.get_task_info(task) for task in friend_task_ids]
 
-    return render_template("home.html", tasks_done=tasks_done, tasks_ip=tasks_ip, tasks_ns=tasks_ns)
+    return render_template("home.html", tasks_done=tasks_done, tasks_ip=tasks_ip, tasks_ns=tasks_ns, friend_tasks=friend_tasks)
 
 
 # helper for home
@@ -138,9 +141,13 @@ def profile():
     pfp_dict = {"happy_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F00%2Ff6%2Fe0%2F00f6e04b05b731670e13a1347c32d64c.jpg&f=1&nofb=1&ipt=0d2b6923a92fe59721e0029d8c45198857c993b9fb72ed3a396b9d75a3b1b515",
                 "toast_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fdf%2Fb1%2F76%2Fdfb176eedc5fcae081e2ad767a52ed01.jpg&f=1&nofb=1&ipt=5ae127651458ee89055e8f474d668acb6a99346a84d9201d0a5035a3f069b840",
                 "hungry_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F0f%2F5b%2F17%2F0f5b1779b42e7c161182cb01f2282039.jpg&f=1&nofb=1&ipt=c61418d2fa1866be7fc04661862085b45006d524694d4caf10f8d63862e1505c",
-                "sad_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fee%2Fec%2F2a%2Feeec2ab975ff2361173df8ce2b9d4f84.jpg&f=1&nofb=1&ipt=8f35871e4080f38326c829aadfdc218098ca92aa18df7c26c41fd0edd53b499a",
+                "sad_cat": "https://i.pinimg.com/736x/46/93/da/4693dae1401e7ab161a57817d37251f8.jpg",
                 "loafing_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fb0%2F7c%2F1c%2Fb07c1c7681bc75929166cdf84fe1cb48.jpg&f=1&nofb=1&ipt=50eefac65b2c9dd538044503780868d211ed88a5a781f5c051bf8d4a3e9bf443",
-                "sleeping_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F5d%2F9b%2F97%2F5d9b9763364a80ba2c041c38cdf0217a.jpg&f=1&nofb=1&ipt=5cb8c60608e2e1e64c45eeb03f49e9c822b974931f73d8ea305f05ef749a1151"
+                "sleeping_cat": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F5d%2F9b%2F97%2F5d9b9763364a80ba2c041c38cdf0217a.jpg&f=1&nofb=1&ipt=5cb8c60608e2e1e64c45eeb03f49e9c822b974931f73d8ea305f05ef749a1151",
+                "corporate_cat": "https://i.pinimg.com/736x/a2/6f/76/a26f7650b87a782f64e4589acce1cd69.jpg",
+                "productive_cat": "https://i.pinimg.com/1200x/68/2d/fc/682dfc61e70730de01a2ca9c21212b06.jpg",
+                "truce_cat": "https://i.pinimg.com/1200x/bb/11/15/bb11151a75a247a45225e571e2de5ae7.jpg",
+                "annoyed_cat": "https://i.pinimg.com/736x/5d/8b/d9/5d8bd9e48344509fa6cc50caa057ce56.jpg"
               }
     pfp = data.get_pfp(session['username'])
     if pfp == 'None':

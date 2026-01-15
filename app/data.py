@@ -301,7 +301,7 @@ def get_friend_tasks(username):
     friends = get_friends(username)
     friend_tasks = []
     for task in tasks:
-        if get_task_visibility(task) != "":
+        if get_task_visibility(task) != "no one":
             users = get_task_users(task)
             for friend in friends:
                 if friend in users:
