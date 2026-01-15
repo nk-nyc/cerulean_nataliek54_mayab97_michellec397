@@ -361,16 +361,16 @@ def get_task_owner(id):
 
 
 def get_task_info(id):
-
-    db = sqlite3.connect(DB_FILE)
-    c = db.cursor()
-
-    data = c.execute('SELECT * FROM tasks').fetchall()
-
-    db.commit()
-    db.close()
-
-    return clean_list(data)
+    info = []
+    info += [get_task_name(id)]
+    info += [id]
+    info += [get_task_desc(id)]
+    info += [get_task_deadline(id)]
+    info += [get_task_users(id)]
+    info += [get_task_visibility(id)]
+    info += [get_task_join_perms(id)]
+    info += [get_task_owner(id)]
+    return info
 
 
 
