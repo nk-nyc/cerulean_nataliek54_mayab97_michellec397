@@ -92,7 +92,7 @@ def home():
     friend_task_ids = data.get_friend_tasks(session['username'])
     friend_tasks = [data.get_task_info(task) for task in friend_task_ids]
 
-    return render_template("home.html", tasks_done=tasks_done, tasks_ip=tasks_ip, tasks_ns=tasks_ns, friend_tasks=friend_tasks)
+    return render_template("home.html", user=session['username'], tasks_done=tasks_done, tasks_ip=tasks_ip, tasks_ns=tasks_ns, friend_tasks=friend_tasks)
 
 
 # helper for home
