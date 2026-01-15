@@ -73,10 +73,6 @@ def home():
         return redirect(url_for("login"))
 
     all_tasks = data.get_all_tasks(session['username'])
-<<<<<<< HEAD
-=======
-    print(all_tasks)
->>>>>>> 2ac527b368cfb48185a7853b366f79b42ffb12a1
 
     for task in all_tasks:
         if f'join {task}' in request.form:
@@ -218,13 +214,26 @@ def get_tasks():
     tasks = data.get_all_tasks(session['username'])
     #print(tasks)
     task_list = []
+
+    owned = data.get_all_tasks_owned(session['username'])
     for task in tasks:
         #format: deadline, name, status
-        if not [data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task)] in task_list:
-            task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task)])
+        if not [data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), True, task] in task_list and not [data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), False, task] in task_list :
+            if task in owned:
+                task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), True, task])
+            else:
+                task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), False, task])
     print(task_list)
     return task_list
 
+@app.route('/modifytask', methods=['GET', 'POST'])
+def modifytask(): #takes in task id + new location
+    task = request.args.get('task')
+    new_status = request.args.get('new_location')
+    data.set_task_status(task, new_status)
+    print(task)
+    print(data.get_task_status(task))
+    return new_status
 
 @app.route('/profile', methods=["GET", "POST"])
 def profile():
