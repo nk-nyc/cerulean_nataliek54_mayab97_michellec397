@@ -13,6 +13,14 @@ const monthCodes = [1, 4, 4, 0, 2, 5, 0, 3, 6, 1, 5, 6]
 
 const monthswithtoomanydays = ['January', 'March', 'May', 'July', 'August', 'October', 'December']
 
+async function getTasks() {
+  const response = await fetch("/gettasks", {method: 'POST'});
+  if (response.ok) {
+    const data = await response.json();
+    const tasks = data
+    return tasks
+  }
+}
 
 function getFirstDayOfTheWeek(month, year){
   twoDigs = year % 100;
@@ -37,7 +45,6 @@ function refreshDays(month, year) {
   // 0 is saturday, 1 is sunday, etc. 0 -> 5, 1 -> 6, 2 -> 0
   // plus five mod seven
   numToAdd = (first_day + 4) % 7
-  console.log(numToAdd)
 
     //add spaces first
   for (let i = 0; i < numToAdd; i++) {
@@ -76,13 +83,48 @@ function refreshDays(month, year) {
   }
 }
 
-function renderCalendar(month, year) {
-  console.log(month, year)
+async function renderCalendar(month, year) {
+  // setup calendar
   refreshDays(month, year);
   date = today.getDate();
   monthelement.innerText = monthNames[month] + ' ' + year;
-  
+  tasks = await getTasks() 
+  // add tasks to the calendar
+  console.log(tasks)
+  for (let i = 0; i < tasks.length; i++) {
+    if ((parseInt(tasks[i][0].slice(5, 7)) - 1) == month && parseInt(tasks[i][0].slice(0, 4)) == year) {
+      console.log('e')
+      let day = tasks[i][0].slice(8, 12)
+      let taskName = tasks[i][1]
+      let taskDate = document.getElementById(day)
+      let status = tasks[i][2]
+      console.log(status)
+      if (status == 'Not started') {
+        taskDate.innerHTML = day + `
+        <div class='ns'>
+          <p>` + taskName + `</p>
+        </div>
+        `
+      } else if (status == 'In progress') {
+        taskDate.innerHTML = day + `
+        <div class='ip'>
+          <p>` + taskName + `</p>
+        </div>
+        `
+      } else {
+        taskDate.innerHTML = day + `
+        <div class='Done'>
+          <p>` + taskName + `</p>
+        </div>
+        `        
+      }
+
+    }
+  }
+
 }
+
+
 
 initializeCalendar();
 
@@ -141,6 +183,7 @@ create.addEventListener('click', () => createEvent())
 function createEvent() {
   box = document.getElementById('create_menu')
   box.innerHTML = `
+  <form method='post'>
     <div>
       <h1 class="beegtext">Task name:</h1>
     </div>
@@ -151,7 +194,7 @@ function createEvent() {
       <h1 class="beegtext">Task description:</h1>
     </div>
     <div>
-      <input class='big_input' type="text" name="title" class="form-control" placeholder="Task description" required autofocus>
+      <input class='big_input' type="text" name="description" class="form-control" placeholder="Task description" required autofocus>
     </div>
     <div>
       <h1 class="beegtext">Deadline:</h1>
@@ -181,8 +224,21 @@ function createEvent() {
         <option value="No one">No one</option>
       </select>
     </div>
-    <button id='submit' type="submit" class="btn">Create</button>`
-  
+    <div>
+      <h1 class="beegtext">Visibility:</h1>
+      <p class="smoltext"><i>This determines who can see your task.</i></p>
+    </div>
+    <div>
+      <select class='input' name="visibility" required autofocus>
+        <option value="everyone">Everyone</option>
+        <option value="friends">Friends</option>
+        <option value="No one">No one</option>
+      </select>
+    </div>
+    <button id='submit' type="submit" class="btn">Create</button>
+    </form>
+    </div>  
+    `
 }
 
 // create.addEventListener('click', createEvent)

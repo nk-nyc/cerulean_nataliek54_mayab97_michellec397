@@ -136,3 +136,23 @@ body {font-family: Verdana, sans-serif;}
 .smoltext {
   font-size: 12px;
 }
+
+.ns {
+  background-color: #D45B5B;
+  color: white;
+  border-radius: 5px;
+}
+
+
+.ip {
+  background-color: #ede997;
+  color: white;
+  border-radius: 5px;
+}
+
+
+.done {
+  background-color: #39dd54;
+  color: white;
+  border-radius: 5px;
+}

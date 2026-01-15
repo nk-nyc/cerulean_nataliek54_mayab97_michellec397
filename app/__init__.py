@@ -76,22 +76,36 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-@app.route('/calendar')
+@app.route('/calendar', methods=["GET", "POST"])
 def calendar():
     if not 'username' in session:
         return redirect(url_for('login'))
+    user_tasks = data.get_all_tasks(session['username'])
+    tasks = []
+    for task in user_tasks:
+        tasks.append(data.get_task_name(task))
+    if request.method == 'POST' and (not request.form.get('title') in tasks):
+        task = request.form.get('title')
+        description = request.form.get('description')
+        deadline = request.form.get('deadline')
+        cat = request.form.get('category')
+        perms = request.form.get('join_perms')
+        vis = request.form.get('visibility')
+        data.create_task(task, description, deadline, cat, '', vis, perms, session['username'])
+    #send tasks to js
     return render_template('calendar.html')
 
-@app.route('/gettasks')
+@app.route('/gettasks', methods=['POST'])
 def get_tasks():
-    db = sqlite3.connect('data.db')
-    c = db.cursor()
-    username = session['username']
-    c.execute("SELECT FROM tasks * WHERE instr(users, {username})")
-    data = c.fetchall()
-    db.commit()
-    db.close()
-    return data
+    tasks = data.get_all_tasks(session['username'])
+    #print(tasks)
+    task_list = []
+    for task in tasks:
+        #format: deadline, name, status
+        if not [data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task)] in task_list:
+            task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task)])
+    print(task_list)
+    return task_list
 
 
 @app.route('/profile', methods=["GET", "POST"])
