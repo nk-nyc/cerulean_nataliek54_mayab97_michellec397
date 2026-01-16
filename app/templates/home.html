@@ -1,123 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<head>
-		<title>ChoreRulean Home </title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-		<style>
-		.navbar {
-		  display: grid;
-		  grid-template-columns: auto auto auto auto auto auto auto;
-		  font-size: 20px;
-		  align-items: center;
-		  list-style-type: none;
-		  background-color: #1c1a1a;
-		  align-self: center;
-		}
+<head>
+  <title>ChoreRulean Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-		.nav {
-		  float: top;
-		  overflow: hidden;
-		  text-align: center;
-		  padding: 14px 16px;
-		}
+<body class="bg-light">
 
-		.nav a {
-		  color: #EDEDE9;
-		  text-decoration: none;
-		}
-		</style>
-	</head>
-	<body style="background-color: white;">
-		<!--BT navbar-->
-		<div class="navbar">
-			<div class='nav'>
-				<a href='/'> ChoreRulean </a>
-			</div>
-			<div class="nav">
-				<a href='/'> Home </a>
-			</div>
-			<div class="nav">
-				<a href="/profile"> Profile </a>
-			</div>
-			<div class="nav">
-				<a href="/calendar"> Calendar </a>
-			</div>
-			<div class="nav">
-				<a href="/logout"> Log Out </a>
-			</div>
-		</div>
-		<div>
-		<center><h1>Welcome, {{ user }}!</h1></center>
-		<!--tasks done-->
-		<form action="/home" method="POST">
-			<div>
-				<h3>Completed tasks:</h3>
-					<div id='doneBox' style='border-radius: 10px; background-color: #95fc88; margin: 10px; padding: 10px;'>
-					{% for task in tasks_done %}
-						<div draggable="true" id='{{task[0]}}'>			
-						{{ task[0] }} due {{ task[3] }}
-						{% if task[9] == user %} <!--owner of task-->
-							<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-						{% else %}
-							<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-						{% endif %}
-						</div>
-						<br>
-					{% endfor %}
-				</div>
-			</div>
-			<!--tasks ip-->
-			<div>
-				<h3>Tasks in progress:</h3>
-					<div id='ipBox' style='border-radius: 10px; background-color: #fcec88; margin: 10px; padding: 10px;'>
-					{% for task in tasks_ip %}
-						<div draggable="true" id='{{task[0]}}'>
-							{{ task[0] }} due {{ task[3] }}
-							{% if task[9] == user %} <!--owner of task-->
-								<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-							{% else %}
-								<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-							{% endif %}
-						</div>
-						<br>
-					{% endfor %}
-				</div>
-			</div>
-			<!--tasks ns-->
-			<div>
-				<h3>Tasks not started:</h3>
-					<div id='nsBox' style='border-radius: 10px; background-color: #fc8888; margin: 10px; padding: 10px;'>
-					{% for task in tasks_ns %}
-						<div draggable="true" id='{{task[0]}}'>
-							{{ task[0] }} due {{ task[3] }}
-							{% if task[9] == user %} <!--owner of task-->
-								<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-							{% else %}
-								<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-							{% endif %}
-						</div>
-						<br>
-					{% endfor %}
-				</div>
-			</div>
-			<!--friend tasks-->
-			<div>
-				<h3>Tasks friends are up to:</h3>
-				{% for task in friend_tasks %}
-					<div draggable="true" id='{{task[0]}}'>
-						{{ task[9] }}: {{ task[0] }} due {{ task[3] }}
-						{% if task[7] != "no one" and user not in task[6] %}
-							<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
-						{% endif %}
-					</div>
-					<br>
-				{% endfor %}
-			</div>
-		</form>
+<!DOCTYPE html>
+<html lang="en">
 
-		<script src='../static/js/home.js'></script>
-  </body>
+<head>
+  <title>ChoreRulean Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<!-- Navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">ChoreRulean</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="/calendar">Calendar</a></li>
+          <li class="nav-item"><a class="nav-link text-danger" href="/logout">Log Out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- Welcome Message -->
+  <div class="container mt-4">
+    <h1 class="text-center mb-4">Welcome, {{ user }}!</h1>
+
+    <form action="/home" method="POST">
+<!-- Completed Tasks -->
+      <div class="mb-4">
+        <h3>Completed tasks</h3>
+        <div class="list-group" id="doneBox">
+          {% for task in tasks_done %}
+          <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+            <span>{{ task[0] }} due {{ task[3] }}</span>
+            {% if task[9] == user %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+            {% else %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+<!-- Tasks In Progress -->
+      <div class="mb-4">
+        <h3>Tasks in progress</h3>
+        <div class="list-group" id="ipBox">
+          {% for task in tasks_ip %}
+        <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>{{ task[0] }} due {{ task[3] }}</span>
+            {% if task[9] == user %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+            {% else %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+            {% endif %}
+       </div>
+          {% endfor %}
+        </div>
+      </div>
+
+<!-- Tasks Not Started -->
+<div class="mb-4">
+    <h3>Tasks not started</h3>
+    <div class="list-group" id="nsBox">
+      {% for task in tasks_ns %}
+          <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+            <span>{{ task[0] }} due {{ task[3] }}</span>
+            {% if task[9] == user %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+        {% else %}
+            <button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+            {% endif %}
+          </div>
+         {% endfor %}
+        </div>
+      </div>
+
+ <!-- Friends' Tasks -->
+    <div class="mb-4">
+    <h3>Tasks friends are up to</h3>
+    <div class="list-group">
+        {% for task in friend_tasks %}
+        <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+           <span>{{ task[9] }}: {{ task[0] }} due {{ task[3] }}</span>
+        {% if task[7] != "no one" and user not in task[6] %}
+           <button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
+            {% endif %}
+          </div>
+      {% endfor %}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="../static/js/home.js"></script>
+
+</body>
 </html>
