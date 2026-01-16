@@ -57,10 +57,16 @@
 <div class="container my-5" style="max-width: 800px;">
 
   <h2 class="mb-4 text-center">Edit Task</h2>
+	
+	<center>{{ msg }}</center>
 
   <!-- info -->
-  <form action="/edit" method="POST" class="mb-5">
-    <center><h5>Task Name: {{ task_lst[0] }} </h5></center>
+	<form action="/edit" method="POST" class="mb-5">
+    <center><h5>Task Name: </h5></center>
+		<input type="text" class="form-control" rows="3" name="task_name" value={{ task_lst[0] }}></input>
+		<button class="btn btn-primary" type="submit" name="name_form">Save Changes</button>
+	</form>
+	<form action="/edit" method="POST" class="mb-5">
     <div class="mb-3">
 				<label class="form-label">Description</label>
 				<input type="text" class="form-control" rows="3" name="task_desc" value={{ task_lst[2] }}></input>
@@ -131,8 +137,8 @@
 
     <form action="/edit" method="POST" class="mt-3">
       <label class="form-label">Invite User</label>
-      <input type="text" class="form-control mb-2" name="inv_form" placeholder="username">
-      <button class="btn btn-secondary" type="submit" name="task_inv">Send Invite</button>
+      <input type="text" class="form-control mb-2" name="task_inv" placeholder="username">
+      <button class="btn btn-secondary" type="submit" name="inv_form">Send Invite</button>
     </form>
   </div>
 
@@ -144,8 +150,6 @@
   </div>
 
 </div>
-
-{{ msg }}
 
 </body>
 </html>

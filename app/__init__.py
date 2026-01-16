@@ -165,7 +165,7 @@ def edit():
                 msg="You can't invite yourself to this task."
             elif user in task_users:
                 msg="User is already partaking in this task."
-            elif task in data.get_pending_task_invites(user):
+            elif to_edit in data.get_pending_task_invites(user):
                 msg="You have already invited this user to this task."
             else:
                 data.invite_user(user, to_edit)
