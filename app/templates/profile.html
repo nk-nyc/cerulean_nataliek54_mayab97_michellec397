@@ -71,6 +71,9 @@
 			<img src="{{ pfp_dict[pfp] }}" alt="{{ pfp }}" width="160" height="160">
 </div>
 			<br>
+			<center>
+				{{ msg }}<!--display a message (error, success msg) if there was one provided-->
+			</center>
 			<div class="border rounded p-5 bg-white mb-4">
 		 <h4 class="fw-semibold mb-3">Settings</h4>
 		</center>
@@ -130,7 +133,7 @@
 </div>
 		<!--display pending requests-->
 		<div class="border rounded p-5 bg-white mb-4">
-		<h4 class="fw-semibold mb-2">Pending requests</h4>
+		<h4 class="fw-semibold mb-2">Pending friend requests</h4>
 
 		{% for user in fr_reqs %}
 			<form action="/profile" method="POST">
@@ -149,10 +152,19 @@
         <button class="btn btn-primary" type="submit" name="fr_form">Send</button>
       </form>
     </div>
+		
+		<div class="border rounded p-5 bg-white mb-4">
+		<h4 class="fw-semibold mb-2">Pending task invites</h4>
+
+		{% for task in task_invs %}
+			<form action="/profile" method="POST">
+				<div class="me-auto">{{ task[1] }} from {{ task[2] }}</div>
+				<button class="btn btn-sm btn-outline-success" type="submit" name="accept {{ task[0] }}">Join</button>
+			</form>
+		{% endfor %}
+	</div>
 
 		<br>
-		<!--display a message (error, success msg) if there was one provided-->
-		{{ msg }}
 
 	</body>
 </html>

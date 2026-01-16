@@ -109,7 +109,7 @@
 				{% for task in friend_tasks %}
 					<div draggable="true" id='{{task[0]}}'>
 						{{ task[9] }}: {{ task[0] }} due {{ task[3] }}
-						{% if task[7] != "no one" %}
+						{% if task[7] != "no one" and user not in task[6] %}
 							<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
 						{% endif %}
 					</div>

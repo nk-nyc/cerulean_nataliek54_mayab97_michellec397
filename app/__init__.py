@@ -182,7 +182,7 @@ def edit():
     if 'del_form' in request.form:
         data.delete_task(to_edit)
         edit_task = ""
-        return redirect(url_for('home.html'))
+        return redirect(url_for('home'))
 
     task_info = data.get_task_info(to_edit)
 
@@ -252,6 +252,8 @@ def profile():
 
     # set up vars for settings changes
     invite_options = ["no one", "friends", "everyone"]
+    task_ids = data.get_pending_task_invites(session['username'])
+    task_invs = [[id, data.get_task_name(id), data.get_task_owner(id)] for id in task_ids]
     fr_list = data.get_friends(session['username'])
     if len(fr_list) == 0:
         fr_list = ['None yet!']
@@ -275,55 +277,61 @@ def profile():
     # change password
     if 'password_form' in request.form:
         if request.form['old_pass'] == request.form['new_pass']:
-            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+            return render_template('profile.html', user=session['username'], msg="New password cannot be the same as the old password.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
         if data.auth(session['username'], request.form['old_pass']):
             data.change_password(session['username'], request.form['old_pass'], request.form['new_pass'])
-            return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+            return render_template('profile.html', user=session['username'], msg="Password updated successfully!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
         else:
-            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+            return render_template('profile.html', user=session['username'], msg="Wrong password--password not changed.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
 
     # change pfp
     if 'pfp_form' in request.form:
         data.edit_pfp(session['username'], request.form.get('pfp'))
         pfp = request.form.get('pfp')
-        return render_template('profile.html', user=session['username'], msg="Profile picture updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+        return render_template('profile.html', user=session['username'], msg="Profile picture updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
 
     # change who can invite you to tasks
     if 'invite_form' in request.form:
         perms=request.form.get('invite')
         data.set_invite_perms(session['username'], perms)
-        return render_template('profile.html', user=session['username'], msg="Settings updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+        return render_template('profile.html', user=session['username'], msg="Settings updated!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
 
     # check if accepted a pending friend request
     for friend in fr_reqs:
         if f'accept {friend}' in request.form:
             data.accept_fr(friend, session['username'])
-            return render_template('profile.html', user=session['username'], msg="Friend request accepted!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+            return render_template('profile.html', user=session['username'], msg="Friend request accepted!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
         elif f'decline {friend}' in request.form:
             data.remove_fr(friend, session['username'])
-            return render_template('profile.html', user=session['username'], msg="Friend request declined.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
-
+            return render_template('profile.html', user=session['username'], msg="Friend request declined.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
+    
+    for task in task_invs:
+        if f'accept {task[0]}' in request.form:
+            data.accept_task_invite(session['username'], task[0])
+            task_invs.remove(task)
+            return render_template('profile.html', user=session['username'], msg="Task joined!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
+    
     # send a friend request
     if 'fr_form' in request.form:
         user = request.form.get('fr_user')
         if data.user_exists(user):
             if user == session['username']:
-                return render_template('profile.html', user=session['username'], msg="You can't send a friend request to yourself.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+                return render_template('profile.html', user=session['username'], msg="You can't send a friend request to yourself.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
             elif user in fr_list:
-                return render_template('profile.html', user=session['username'], msg="User is already your friend!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+                return render_template('profile.html', user=session['username'], msg="User is already your friend!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
             elif user in fr_reqs:
-                return render_template('profile.html', user=session['username'], msg="This user has already sent you a friend request!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+                return render_template('profile.html', user=session['username'], msg="This user has already sent you a friend request!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
             elif session['username'] in data.get_friend_reqs(user):
-                return render_template('profile.html', user=session['username'], msg="You have already sent a friend request to this user!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+                return render_template('profile.html', user=session['username'], msg="You have already sent a friend request to this user!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
             else:
                 data.send_friend_req(session['username'], user)
-                return render_template('profile.html', user=session['username'], msg="Friend request sent!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+                return render_template('profile.html', user=session['username'], msg="Friend request sent!", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
         # username doesn't exist
         else:
-            return render_template('profile.html', user=session['username'], msg="Username does not exist.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+            return render_template('profile.html', user=session['username'], msg="Username does not exist.", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
 
     # nothing happened, just display page
-    return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp)
+    return render_template('profile.html', user=session['username'], msg="", invite_options=invite_options, perms=perms, fr_reqs=fr_reqs, fr_list=fr_list, pfp_dict=pfp_dict, pfp=pfp, task_invs=task_invs)
 
 
 if __name__=='__main__':
