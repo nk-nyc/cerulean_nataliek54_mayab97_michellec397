@@ -78,8 +78,9 @@ ipBox.addEventListener('dragover', (ev) => {
 ipBox.addEventListener('drop', (ev) => {
   ev.preventDefault();
   if (moving_owned) {
+    console.log(moving_task)
     ipBox.innerHTML += 
-  `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+  `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="` + moving_task[0] + `">
          <span>` + moving_task + `</span>
             <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>
             </div>`
