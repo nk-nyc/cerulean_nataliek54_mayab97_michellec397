@@ -72,9 +72,9 @@ def home():
     if not 'username' in session:
         return redirect(url_for("login"))
 
-    all_tasks = data.get_all_tasks(session['username'])
+    tasks_global = data.all_tasks()
 
-    for task in all_tasks:
+    for task in tasks_global:
         if f'join {task}' in request.form:
             data.add_user(task, session['username'])
         elif f'leave {task}' in request.form:
@@ -83,6 +83,8 @@ def home():
             global edit_task
             edit_task = task
             return redirect(url_for("edit"))
+    
+    all_tasks = data.get_all_tasks(session['username'])
 
     # list of tasks done
     tasks_done_unsorted = [task for task in all_tasks if data.get_task_status(task).lower() == "done"]

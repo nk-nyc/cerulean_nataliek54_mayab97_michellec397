@@ -126,7 +126,7 @@
 		
 		<form action="/edit" method="POST">
     <ul>
-      {% for user in users %}
+      {% for user in task_lst[6] if user != task_lst[9] %}
         <li>
           {{ user }}
           <button class="btn btn-danger" type="submit" name="rm {{ user }}">remove</button>
