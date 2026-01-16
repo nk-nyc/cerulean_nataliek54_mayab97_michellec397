@@ -48,6 +48,7 @@
       <div class="mb-4">
         <h3>Completed tasks</h3>
         <div class="list-group" id="doneBox">
+			<br>
           {% for task in tasks_done %}
           <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
             <span>{{ task[0] }} due {{ task[3] }}</span>
@@ -65,6 +66,7 @@
       <div class="mb-4">
         <h3>Tasks in progress</h3>
         <div class="list-group" id="ipBox">
+			<br>
           {% for task in tasks_ip %}
         <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
          <span>{{ task[0] }} due {{ task[3] }}</span>
@@ -82,6 +84,7 @@
 <div class="mb-4">
     <h3>Tasks not started</h3>
     <div class="list-group" id="nsBox">
+		<br>
       {% for task in tasks_ns %}
           <div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
             <span>{{ task[0] }} due {{ task[3] }}</span>

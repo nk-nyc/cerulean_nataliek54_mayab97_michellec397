@@ -56,13 +56,17 @@ nsBox.addEventListener('dragover', (ev) => {
 nsBox.addEventListener('drop', (ev) => {
   ev.preventDefault();
   if (moving_owned) {
-    nsBox.innerHTML += '<div>' + (moving_task) + `</div> 
-    <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>`
+    nsBox.innerHTML += 
+      `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>
+            </div>`
   }
   else {
-    nsBox.innerHTML += '<div>' + (moving_task) + `</div>
-    <button class="btn btn-sm btn-outline-success" type="submit" name="leave ` + moving_task[1]`">Leave</button>
-    `
+    nsBox.innerHTML += 
+          `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+         </div>`
   }
   move_task(moving_task, 'Not started');
 
@@ -74,13 +78,18 @@ ipBox.addEventListener('dragover', (ev) => {
 ipBox.addEventListener('drop', (ev) => {
   ev.preventDefault();
   if (moving_owned) {
-    ipBox.innerHTML += '<div>' + (moving_task) + `</div> 
-    <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>`
+    ipBox.innerHTML += 
+  `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>
+            </div>`
+  
   }
   else {
-    ipBox.innerHTML += '<div>' + (moving_task) + `</div>
-    <button class="btn btn-sm btn-outline-success" type="submit" name="leave ` + moving_task[1]`">Leave</button>
-    `
+    ipBox.innerHTML +=
+      `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+         </div>`
   }
 
   move_task(moving_task, 'In progress');
@@ -95,13 +104,16 @@ doneBox.addEventListener('drop', function(ev) {
   ev.preventDefault();
   console.log(moving_task)
   if (moving_owned) {
-    doneBox.innerHTML += '<div>' + (moving_task) + `</div> 
-    <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>`
+    doneBox.innerHTML +=   `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+            <button class="btn btn-sm btn-outline-success" type="submit" name="edit ` + moving_task[1] + `">Edit</button>
+            </div>`
   }
   else {
-    doneBox.innerHTML += '<div>' + (moving_task) + `</div>
-    <button class="btn btn-sm btn-outline-success" type="submit" name="leave ` + moving_task[1]`">Leave</button>
-    `
+    doneBox.innerHTML += 
+          `<div class="list-group-item d-flex justify-content-between align-items-center" draggable="true" id="{{ task[0] }}">
+         <span>` + moving_task + `</span>
+         </div>`
   }
 
   move_task(moving_task, 'Done');
