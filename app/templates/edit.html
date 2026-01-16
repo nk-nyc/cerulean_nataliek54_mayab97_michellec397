@@ -74,9 +74,9 @@
 
         <label class="form-label">Status</label>
         <select class="form-select" name="status">
-          <option {% if status == "Not started" %}selected{% endif %}>Not started</option>
-          <option {% if status == "In progress" %}selected{% endif %}>In progress</option>
-          <option {% if status == "Completed" %}selected{% endif %}>Completed</option>
+          <option {% if task_status == "not started" %}selected{% endif %}>Not started</option>
+          <option {% if task_status == "in progress" %}selected{% endif %}>In progress</option>
+          <option {% if task_status == "completed" %}selected{% endif %}>Completed</option>
         </select>
     </div>
 
