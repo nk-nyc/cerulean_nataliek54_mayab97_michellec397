@@ -197,7 +197,14 @@ def calendar():
     user_tasks = data.get_all_tasks(session['username'])
     tasks = []
     for task in user_tasks:
-        tasks.append(data.get_task_name(task))
+        name = data.get_task_name(task)
+        tasks.append(name)  
+        print(name)  
+        if request.method == 'POST' and f'edit {name}' in request.form:
+            print('e')
+            global edit_task
+            edit_task = task
+            return redirect(url_for("edit"))
     if request.method == 'POST' and (not request.form.get('title') in tasks):
         task = request.form.get('title')
         description = request.form.get('description')
@@ -223,7 +230,6 @@ def get_tasks():
                 task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), True, task])
             else:
                 task_list.append([data.get_task_deadline(task), data.get_task_name(task), data.get_task_status(task), False, task])
-    print(task_list)
     return task_list
 
 @app.route('/modifytask', methods=['GET', 'POST'])
@@ -231,8 +237,6 @@ def modifytask(): #takes in task id + new location
     task = request.args.get('task')
     new_status = request.args.get('new_location')
     data.set_task_status(task, new_status)
-    print(task)
-    print(data.get_task_status(task))
     return new_status
 
 @app.route('/profile', methods=["GET", "POST"])
