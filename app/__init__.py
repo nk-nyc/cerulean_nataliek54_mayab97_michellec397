@@ -127,9 +127,9 @@ def edit():
     join_options = vis_options
     msg = ""
 
-    status = data.get_task_status(to_edit)
-    vis = data.get_task_visibility(to_edit)
-    join = data.get_task_join_perms(to_edit)
+    status = data.get_task_status(to_edit).lower()
+    vis = data.get_task_visibility(to_edit).lower()
+    join = data.get_task_join_perms(to_edit).lower()
 
     if 'name_form' in request.form:
         name = request.form.get('task_name')
@@ -142,18 +142,20 @@ def edit():
         desc = request.form.get('task_desc')
         data.set_task_description(to_edit, desc)
 
-    # edit deadline tba
+    if 'deadline_form' in request.form:
+        deadline = request.form.get('task_deadline')
+        data.set_task_deadline(to_edit, deadline)
 
     if 'status_form' in request.form:
-        status = request.form.get('status')
+        status = request.form.get('status').lower()
         data.set_task_status(to_edit, status)
 
     if 'vis_form' in request.form:
-        vis = request.form.get('vis')
+        vis = request.form.get('vis').lower()
         data.set_task_visibility(to_edit, vis)
 
     if 'join_form' in request.form:
-        join = request.form.get('join')
+        join = request.form.get('join').lower()
         data.set_task_join_perms(to_edit, join)
 
     if 'inv_form' in request.form:
@@ -167,6 +169,7 @@ def edit():
                 msg="You have already invited this user to this task."
             else:
                 data.invite_user(user, to_edit)
+                msg="Invited user!"
         # username doesn't exist
         else:
             msg="Username does not exist."
@@ -174,6 +177,7 @@ def edit():
     for user in task_users:
         if f'rm {user}' in request.form:
             data.leave_task(to_edit, user)
+            msg="Removed user."
 
     if 'del_form' in request.form:
         data.delete_task(to_edit)

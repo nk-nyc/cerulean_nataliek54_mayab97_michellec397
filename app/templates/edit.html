@@ -59,82 +59,93 @@
   <h2 class="mb-4 text-center">Edit Task</h2>
 
   <!-- info -->
-  <form method="POST" class="mb-5">
-
+  <form action="/edit" method="POST" class="mb-5">
     <center><h5>Task Name: {{ task_lst[0] }} </h5></center>
-
     <div class="mb-3">
-      <label class="form-label">Description</label>
-      <textarea class="form-control" rows="3" name="description">{{ task_lst[2] }}</textarea>
+				<label class="form-label">Description</label>
+				<input type="text" class="form-control" rows="3" name="task_desc" value={{ task_lst[2] }}></input>
+				<button class="btn btn-primary" type="submit" name="desc_form">Save Changes</button>
     </div>
-
+	</form>
+	
     <div class="row mb-3">
+		
+			<form action="/edit" method="POST">
         <label class="form-label">Deadline</label>
-        <input type="date" class="form-control" name="deadline" value="{{ task_deadline }}">
-
+        <input type="date" class="form-control" name="task_deadline" value={{ task_lst[3] }}></input>
+				<button class="btn btn-primary" type="submit" name="deadline_form">Save Changes</button>
+			</form>
+			
+			<form action="/edit" method="POST">
         <label class="form-label">Status</label>
         <select class="form-select" name="status">
-          <option {% if task_status == "not started" %}selected{% endif %}>Not started</option>
-          <option {% if task_status == "in progress" %}selected{% endif %}>In progress</option>
-          <option {% if task_status == "completed" %}selected{% endif %}>Completed</option>
+          <option {% if status == "not started" %} selected {% endif %}>Not started</option>
+          <option {% if status == "in progress" %} selected {% endif %}>In progress</option>
+          <option {% if status == "completed" %} selected {% endif %}>Completed</option>
         </select>
+				<button class="btn btn-primary" type="submit" name="status_form">Save Changes</button>
+			</form>
+			
     </div>
 
-    <button class="btn btn-primary">Save Changes</button>
-  </form>
-
   <!-- permissions -->
-  <form method="POST" class="mb-5">
+  <form action="/edit" method="POST" class="mb-5">
 
     <center><h5>Permissions</h5></center>
 
     <div class="mb-3">
       <label class="form-label">Visibility</label>
-      <select class="form-select" name="visibility">
-        <option {% if vis=="no one" %}selected{% endif %}>Nobody</option>
-        <option {% if vis=="friends" %}selected{% endif %}>Friends Only</option>
-        <option {% if vis=="everyone" %}selected{% endif %}>Everyone</option>
+      <select class="form-select" name="vis">
+        <option {% if vis =="no one" %}selected{% endif %}>Nobody</option>
+        <option {% if vis =="friends" %}selected{% endif %}>Friends</option>
+        <option {% if vis =="everyone" %}selected{% endif %}>Everyone</option>
       </select>
+			<button class="btn btn-primary" type="submit" name="vis_form">Update Visibility</button>
     </div>
 
     <div class="mb-3">
       <label class="form-label">Join Permissions</label>
-      <select class="form-select" name="join_perms">
-        <option {% if join=="no one" %}selected{% endif %}>Nobody</option>
-        <option {% if join=="friends" %}selected{% endif %}>Friends Only</option>
-        <option {% if join=="everyone" %}selected{% endif %}>Everyone</option>
+      <select class="form-select" name="join">
+        <option {% if join =="no one" %}selected{% endif %}>Nobody</option>
+        <option {% if join =="friends" %}selected{% endif %}>Friends</option>
+        <option {% if join =="everyone" %}selected{% endif %}>Everyone</option>
       </select>
+			<button class="btn btn-primary" type="submit" name="join_form">Update Permissions</button>
     </div>
-
-    <button class="btn btn-primary">Update Permissions</button>
   </form>
 
   <!-- users -->
   <div class="mb-5">
     <center><h5>Users</h5></center>
-
+		
+		<form action="/edit" method="POST">
     <ul>
       {% for user in users %}
         <li>
           {{ user }}
-          <a class="text-danger ms-2" href="/remove_user/{{ task_id }}/{{ user }}">remove</a>
+          <button class="btn btn-danger" type="submit" name="rm {{ user }}">remove</button>
         </li>
       {% endfor %}
     </ul>
+		</form>
 
-    <form method="POST" class="mt-3">
+    <form action="/edit" method="POST" class="mt-3">
       <label class="form-label">Invite User</label>
-      <input type="text" class="form-control mb-2" name="invite_user" placeholder="username">
-      <button class="btn btn-secondary">Send Invite</button>
+      <input type="text" class="form-control mb-2" name="inv_form" placeholder="username">
+      <button class="btn btn-secondary" type="submit" name="task_inv">Send Invite</button>
     </form>
   </div>
 
   <!-- DELETE -->
   <div>
-    <a href="/delete_task/{{ task_id }}" class="btn btn-danger">Delete Task</a>
+		<form action="/edit" method="POST">
+			<button class="btn btn-danger" type="submit" name="del_form">Delete Task</button>
+		</form>
   </div>
 
 </div>
+
+{{ msg }}
 
 </body>
 </html>
