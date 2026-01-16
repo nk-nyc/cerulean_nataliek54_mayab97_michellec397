@@ -1,158 +1,222 @@
-ul {list-style-type: none;}
-body {font-family: Verdana, sans-serif;}
 
-.create {
-  background-color: black;
-  border-radius: 10px;
-  width: 20%;
-  color: white;
-  padding: 10px;
-  align-items: center;
-  margin: 10px;
-  font-size: 18px;
+
+body {
+  font-family: Verdana, sans-serif;
+  background-color: white;
+  margin: 0;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ----------- NAVBAR ----------- */
 
 .navbar {
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto;
-  font-size: 20px;
+  grid-template-columns: auto auto auto auto auto;
   align-items: center;
-  list-style-type: none;
   background-color: #1c1a1a;
-  align-self: center;
+  padding: 10px 0;
 }
 
 .nav {
-  float: top;
-  overflow: hidden;
   text-align: center;
-  padding: 14px 16px;
+  font-size: 18px;
 }
 
 .nav a {
-  color: #EDEDE9;
+  color: #ededed;
   text-decoration: none;
+  font-weight: 500;
+}
+
+.nav a:hover {
+  text-decoration: underline;
 }
 
 .month {
-  padding: 10px 10px;
-  margin: 10px;
-  width: 95%;
-  align-self: center;
-  background: black;
+  background-color: lightgray;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 20px auto 10px auto;
+  width: 90%;
   text-align: center;
-
-}
-
-.month ul {
-  margin: 0;
-  padding: 0;
 }
 
 .month ol li {
-  color: white;
-  font-size: 20px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  list-style-type: none;
+  display: inline-block;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0 15px;
+  cursor: pointer;
 }
 
-.month .prev {
-  float: left;
-  padding-top: 10px;
+#prev, #next {
+  font-size: 18px;
+  color: #333;
 }
 
-.month .next {
-  float: right;
-  padding-top: 10px;
-}
 
 .weekdays {
-  margin: 0;
+  width: 90%;
+  margin: auto;
   padding: 10px 0;
-  background-color:#ddd;
 }
 
 .weekdays li {
   display: inline-block;
   width: 13.6%;
-  color: #666;
   text-align: center;
+  font-weight: bold;
+  color: #444;
 }
 
+
 .days {
-  padding: 10px 0;
-  background: #eee;
-  margin: 0;
+  width: 90%;
+  margin: auto;
+  padding: 10px 0 20px 0;
 }
 
 .days li {
-  list-style-type: none;
   display: inline-block;
   width: 13.6%;
-  text-align: center;
-  margin-bottom: 5px;
-  font-size:15px;
-  color: #777;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 5px;
-  border-radius: 4px;
+  min-height: 80px;
+  background-color: #eee;
+  margin-bottom: 8px;
+  padding: 6px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+
+.ns {
+  background-color: #D45B5B;
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 4px;
+  margin-top: 4px;
+}
+
+.ip {
+  background-color: #ede997;
+  color: black;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 4px;
+  margin-top: 4px;
+}
+
+.Done {
+  background-color: #39dd54;
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 2px 4px;
+  margin-top: 4px;
+}
+
+#create {
+  display: block;
+  margin: 15px auto;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#create:hover {
+  opacity: 0.85;
 }
 
 .create_menu {
+  width: 90%;
+  margin: 15px auto;
   background-color: lightgray;
   border-radius: 10px;
-  padding: 10px;
-  padding-left: 30px;
+  padding: 15px;
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;
 }
 
-.btn {
-  width: 30%;
-  border-radius: 10px;
-}
-
 .input {
   border-radius: 10px;
-  width: 60%;  
-  border-width: 0px;
-  padding: 5px;
+  width: 70%;
+  border: none;
+  padding: 6px;
 }
 
 .big_input {
   border-radius: 10px;
-  width: 80%;  
-  height: 50px;  
-  border-width: 0px; 
+  width: 85%;
+  height: 50px;
+  border: none;
 }
 
-.beegtext {
-  font-size: 20px;
-}
-
-.smoltext {
-  font-size: 12px;
-}
-
-.ns {
-  background-color: #D45B5B;
+.btn {
+  width: 35%;
+  border-radius: 10px;
+  border: none;
+  padding: 6px;
+  background-color: black;
   color: white;
-  border-radius: 5px;
+  cursor: pointer;
 }
 
-
-.ip {
-  background-color: #ede997;
-  color: white;
-  border-radius: 5px;
+.month {
+  background-color: lightgray;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 20px auto 10px auto;
+  width: 90%;
 }
 
+.month ol {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
 
-.done {
-  background-color: #39dd54;
-  color: white;
-  border-radius: 5px;
+.month ol li {
+  list-style: none;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#month {
+  text-align: center;
+}
+
+/* Buttons */
+#prev, #next {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Left triangle */
+.triangle-left {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 14px solid #111;
+}
+
+/* Right triangle */
+.triangle-right {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 14px solid #111;
 }

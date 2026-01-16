@@ -55,53 +55,69 @@
 		<form action="/home" method="POST">
 			<div>
 				<h3>Completed tasks:</h3>
-				{% for task in tasks_done %}
-					{{ task[0] }} due {{ task[3] }}
-					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-					{% endif %}
-					<br>
-				{% endfor %}
+					<div id='doneBox' style='border-radius: 10px; background-color: #95fc88; margin: 10px; padding: 10px;'>
+					{% for task in tasks_done %}
+						<div draggable="true" id='{{task[0]}}'>			
+						{{ task[0] }} due {{ task[3] }}
+						{% if task[9] == user %} <!--owner of task-->
+							<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+						{% else %}
+							<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+						{% endif %}
+						</div>
+						<br>
+					{% endfor %}
+				</div>
 			</div>
 			<!--tasks ip-->
 			<div>
 				<h3>Tasks in progress:</h3>
-				{% for task in tasks_ip %}
-					{{ task[0] }} due {{ task[3] }}
-					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-					{% endif %}
-					<br>
-				{% endfor %}
+					<div id='ipBox' style='border-radius: 10px; background-color: #fcec88; margin: 10px; padding: 10px;'>
+					{% for task in tasks_ip %}
+						<div draggable="true" id='{{task[0]}}'>
+							{{ task[0] }} due {{ task[3] }}
+							{% if task[9] == user %} <!--owner of task-->
+								<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+							{% else %}
+								<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+							{% endif %}
+						</div>
+						<br>
+					{% endfor %}
+				</div>
 			</div>
 			<!--tasks ns-->
 			<div>
 				<h3>Tasks not started:</h3>
-				{% for task in tasks_ns %}
-					{{ task[0] }} due {{ task[3] }}
-					{% if task[9] == user %} <!--owner of task-->
-						<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
-					{% else %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
-					{% endif %}
-					<br>
-				{% endfor %}
+					<div id='nsBox' style='border-radius: 10px; background-color: #fc8888; margin: 10px; padding: 10px;'>
+					{% for task in tasks_ns %}
+						<div draggable="true" id='{{task[0]}}'>
+							{{ task[0] }} due {{ task[3] }}
+							{% if task[9] == user %} <!--owner of task-->
+								<button class="btn btn-sm btn-outline-success" type="submit" name="edit {{ task[1] }}">Edit</button>
+							{% else %}
+								<button class="btn btn-sm btn-outline-success" type="submit" name="leave {{ task[1] }}">Leave</button>
+							{% endif %}
+						</div>
+						<br>
+					{% endfor %}
+				</div>
 			</div>
 			<!--friend tasks-->
 			<div>
 				<h3>Tasks friends are up to:</h3>
 				{% for task in friend_tasks %}
-					{{ task[9] }}: {{ task[0] }} due {{ task[3] }}
-					{% if task[7] != "no one" %}
-						<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
-					{% endif %}
+					<div draggable="true" id='{{task[0]}}'>
+						{{ task[9] }}: {{ task[0] }} due {{ task[3] }}
+						{% if task[7] != "no one" %}
+							<button class="btn btn-sm btn-outline-success" type="submit" name="join {{ task[1] }}">Join</button>
+						{% endif %}
+					</div>
 					<br>
 				{% endfor %}
 			</div>
 		</form>
+
+		<script src='../static/js/home.js'></script>
   </body>
 </html>
